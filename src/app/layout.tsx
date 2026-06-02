@@ -18,6 +18,44 @@ export const metadata: Metadata = {
   title: "Iconn Healthcare | Reassuring Quality Diagnostics in Sri Lanka",
   description: "Iconn Healthcare is Sri Lanka's leading distributor of high-value in vitro diagnostics (IVD), point of care (POC) devices, laboratory reagents, chemicals, and sterilizing disinfectants.",
   keywords: "Diagnostics, Point of Care, POC, Reagents, Clinical Chemistry, Microbiology, Immunology, Molecular Biology, Sterilizing, Disinfectants, Sri Lanka, Iconn Healthcare",
+  metadataBase: new URL("https://iconnhealthcare.org"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Iconn Healthcare | Reassuring Quality Diagnostics in Sri Lanka",
+    description: "Leading distributor of high-value in vitro diagnostics (IVD), POC devices, reagents, and sterilizing disinfectants in Sri Lanka.",
+    url: "https://iconnhealthcare.org",
+    siteName: "Iconn Healthcare",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Iconn Healthcare Diagnostics - Reassuring Quality in Diagnostics",
+      },
+    ],
+    locale: "en_LK",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Iconn Healthcare | Reassuring Quality Diagnostics in Sri Lanka",
+    description: "Leading distributor of high-value in vitro diagnostics (IVD), POC devices, reagents, and sterilizing disinfectants in Sri Lanka.",
+    images: ["/og-image.png"],
+    creator: "@IconnHealthcare",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
