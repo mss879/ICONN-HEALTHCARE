@@ -200,8 +200,109 @@ export default function Home() {
   const blogRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [activeModule, setActiveModule] = useState<number>(0);
+  const [isScanning, setIsScanning] = useState<boolean>(false);
+  const activeModuleRef = useRef<number>(0);
+
+  // Update active module ref to prevent stale closures in GSAP context
+  useEffect(() => {
+    activeModuleRef.current = activeModule;
+  }, [activeModule]);
+
+  // Dynamic Scan Trigger function
+  const triggerScan = () => {
+    if (isScanning) return;
+    setIsScanning(true);
+    
+    const terminalText = document.querySelector(".hero-terminal-text");
+    const calibrationPct = document.querySelector(".calibration-pct");
+    const monitorFrame = document.querySelector(".monitor-screen-frame");
+    
+    let stage = 0;
+    const stages = [
+      "SCANNER: ACTIVE. INJECTING SAMPLE...",
+      "CALIBRATION: RE-ALIGNING REAGENTS...",
+      "ANALYZING: COMPILING SPECTRAL BANDS...",
+      "SYSTEM: DATA MATRIX SECURE. STATUS COHERENT."
+    ];
+    
+    const messageInterval = setInterval(() => {
+      if (terminalText && stage < stages.length) {
+        terminalText.textContent = stages[stage];
+        stage++;
+      }
+    }, 700);
+
+    // Speed up sweep scanner and waveform during interactive analysis
+    gsap.to(".hero-scan-beam", { duration: 0.5, repeat: 5, ease: "power1.inOut" });
+    gsap.to(".clean-scan-beam", { duration: 0.4, repeat: 7, ease: "power1.inOut" });
+    gsap.to(".hero-wave-group", { x: -200, duration: 0.9, repeat: 3, ease: "none" });
+    
+    // Subtle physical machine vibration feedback
+    gsap.to(monitorFrame, {
+      x: () => (Math.random() - 0.5) * 5,
+      y: () => (Math.random() - 0.5) * 5,
+      duration: 0.05,
+      repeat: 24,
+      yoyo: true,
+      ease: "none",
+      onComplete: () => {
+        gsap.to(monitorFrame, { x: 0, y: 0, duration: 0.1 });
+      }
+    });
+
+    // Intense diagnostic laser visual flash sweep
+    gsap.fromTo(".hero-screen-glow", 
+      { opacity: 0, x: "-100%" },
+      { opacity: 0.95, x: "100%", duration: 1.2, repeat: 1, ease: "power2.inOut" }
+    );
+
+    // Calibration percent counts up rapidly and stabilizes at pure high-level state
+    const cObj = { val: 92.45 };
+    gsap.fromTo(cObj, 
+      { val: 86.20 },
+      {
+        val: 99.99,
+        duration: 2.8,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          if (calibrationPct) {
+            calibrationPct.textContent = cObj.val.toFixed(2) + "%";
+          }
+        },
+        onComplete: () => {
+          clearInterval(messageInterval);
+          setIsScanning(false);
+          if (terminalText) {
+            terminalText.textContent = "SYS: SCAN COMPLETED. RESOLUTIONS OPTIMAL.";
+          }
+          // Restore normal idling scan timing speeds
+          gsap.to(".hero-scan-beam", { duration: 3.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
+          gsap.to(".clean-scan-beam", { duration: 2.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
+          gsap.to(".hero-wave-group", { x: -100, duration: 3.2, repeat: -1, ease: "none" });
+        }
+      }
+    );
+  };
 
   useEffect(() => {
+    const heroEl = heroRef.current;
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = heroEl?.getBoundingClientRect();
+      if (rect) {
+        const x = Math.round(e.clientX - rect.left);
+        const y = Math.round(e.clientY - rect.top);
+        const elX = document.querySelector(".hero-coords-x");
+        const elY = document.querySelector(".hero-coords-y");
+        if (elX) elX.textContent = `X: ${x}`;
+        if (elY) elY.textContent = `Y: ${y}`;
+      }
+    };
+    
+    if (heroEl) {
+      heroEl.addEventListener("mousemove", handleMouseMove);
+    }
+
     const ctx = gsap.context(() => {
       // Hero Timeline
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -293,6 +394,144 @@ export default function Home() {
       gsap.to(".floating-element-1", { y: 8, duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut" });
       gsap.to(".floating-element-2", { y: -8, duration: 4.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
       gsap.to(".floating-element-3", { scale: 1.025, duration: 5, repeat: -1, yoyo: true, ease: "sine.inOut" });
+
+      // Seamless wave scrolling animation for diagnostic panel
+      gsap.to(".hero-wave-group", {
+        x: -100,
+        duration: 3.2,
+        repeat: -1,
+        ease: "none"
+      });
+
+      // Laser sweep scanner animation
+      gsap.fromTo(".hero-scan-beam",
+        { left: "0%" },
+        {
+          left: "100%",
+          duration: 3.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        }
+      );
+
+      // Calibration readout counter ticking animation
+      const countObj = { val: 92.45 };
+      gsap.to(countObj, {
+        val: 99.98,
+        duration: 2.8,
+        delay: 0.5,
+        ease: "power2.out",
+        onUpdate: () => {
+          const el = document.querySelector(".calibration-pct");
+          if (el) el.textContent = countObj.val.toFixed(2) + "%";
+        },
+        onComplete: () => {
+          // Dynamic tiny fluctuations to represent live diagnostics reading
+          gsap.to(countObj, {
+            val: 99.99,
+            duration: 1.8,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            onUpdate: () => {
+              const el = document.querySelector(".calibration-pct");
+              if (el) {
+                const val = 99.97 + (Math.sin(gsap.ticker.time * 2.5) * 0.015);
+                el.textContent = val.toFixed(2) + "%";
+              }
+            }
+          });
+        }
+      });
+
+      // IVD Mode: Live Fluctuating Bar Charts (Simulating live laboratory testing)
+      for (let i = 0; i < 12; i++) {
+        gsap.to(`.ivd-chart-bar-${i}`, {
+          height: () => `${20 + Math.random() * 75}%`,
+          duration: () => 0.5 + Math.random() * 0.8,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+      }
+
+      // POC Mode: DNA segment base-pair matching simulation
+      gsap.to(".dna-dot", {
+        scaleY: 0.35,
+        duration: 0.65,
+        stagger: {
+          each: 0.1,
+          repeat: -1,
+          yoyo: true
+        },
+        ease: "sine.inOut"
+      });
+
+      // POC Mode: RT-PCR amplification curve loop drawing
+      gsap.fromTo(".poc-curve",
+        { strokeDasharray: "200", strokeDashoffset: "200" },
+        {
+          strokeDashoffset: 0,
+          duration: 3,
+          repeat: -1,
+          ease: "power1.inOut"
+        }
+      );
+
+      // Sterilization Mode: Pathogen cell disintegration micro-animations
+      for (let i = 0; i < 14; i++) {
+        gsap.to(`.pathogen-dot-${i}`, {
+          opacity: () => 0.15 + Math.random() * 0.8,
+          scale: () => 0.4 + Math.random() * 0.8,
+          duration: () => 0.5 + Math.random() * 0.7,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+      }
+
+      // Sterilization Mode: Clean UV scan beam sweep
+      gsap.fromTo(".clean-scan-beam",
+        { left: "0%" },
+        {
+          left: "100%",
+          duration: 2.2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        }
+      );
+
+      // Overview Mode: Typewriter-like live logs system update ticker
+      const sysLogs = [
+        "SYS: READY. WAITING FOR PATIENT SAMPLE...",
+        "SYS: PATIENT REAGENTS LEVEL MATCHED: OK.",
+        "SYS: CALIBRATING VOLTAGE AND APERTURE...",
+        "SYS: DUAL SCAN SCANNER STATUS: STABLE.",
+        "SYS: IDLE. PRESS 'RUN ANALYSIS' TO TEST."
+      ];
+      let sysLogIdx = 0;
+      gsap.timeline({ repeat: -1 })
+        .to({}, {
+          duration: 4.5,
+          onRepeat: () => {
+            if (activeModuleRef.current === 0) {
+              sysLogIdx = (sysLogIdx + 1) % sysLogs.length;
+              const logEl = document.querySelector(".hero-terminal-text");
+              if (logEl) {
+                gsap.to(logEl, {
+                  opacity: 0,
+                  duration: 0.15,
+                  onComplete: () => {
+                    logEl.textContent = sysLogs[sysLogIdx];
+                    gsap.to(logEl, { opacity: 1, duration: 0.15 });
+                  }
+                });
+              }
+            }
+          }
+        });
 
       // About section observer
       const aboutObserver = new IntersectionObserver((entries) => {
@@ -413,7 +652,12 @@ export default function Home() {
 
     }, containerRef);
 
-    return () => ctx.revert();
+    return () => {
+      if (heroEl) {
+        heroEl.removeEventListener("mousemove", handleMouseMove);
+      }
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -427,9 +671,27 @@ export default function Home() {
       <section ref={heroRef} className="relative pt-16 pb-20 md:pt-24 md:pb-32 bg-gradient-to-b from-white via-primary-light/20 to-white overflow-hidden">
         {/* Subtle background animated blobs & coordinates grid */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none">
-          <div className="absolute hero-bg-blob-1 top-[10%] left-[5%] w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
-          <div className="absolute hero-bg-blob-2 bottom-[10%] right-[5%] w-[450px] h-[450px] bg-teal-400/5 rounded-full blur-3xl"></div>
+          <div className={`absolute hero-bg-blob-1 top-[10%] left-[5%] w-96 h-96 rounded-full blur-3xl transition-colors duration-1000 ${
+            activeModule === 1 ? "bg-amber-500/5" :
+            activeModule === 2 ? "bg-blue-500/5" :
+            activeModule === 3 ? "bg-emerald-500/5" :
+            "bg-primary/5"
+          }`}></div>
+          <div className={`absolute hero-bg-blob-2 bottom-[10%] right-[5%] w-[450px] h-[450px] rounded-full blur-3xl transition-colors duration-1000 ${
+            activeModule === 1 ? "bg-amber-400/5" :
+            activeModule === 2 ? "bg-blue-400/5" :
+            activeModule === 3 ? "bg-emerald-400/5" :
+            "bg-teal-400/5"
+          }`}></div>
           <div className="absolute inset-0 bg-[linear-gradient(rgba(13,148,136,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(13,148,136,0.015)_1px,transparent_1px)] bg-[size:40px_40px] opacity-70"></div>
+          
+          {/* Interactive floating particles */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+            <div className="absolute floating-particle-1 top-[20%] left-[8%] text-primary/10 text-xl font-bold font-mono select-none">+</div>
+            <div className="absolute floating-particle-2 top-[65%] left-[12%] text-teal-500/10 text-2xl font-light font-mono select-none">○</div>
+            <div className="absolute floating-particle-3 top-[30%] right-[10%] text-primary/10 text-2xl font-light font-mono select-none">○</div>
+            <div className="absolute floating-particle-4 top-[75%] right-[15%] text-teal-500/10 text-xl font-bold font-mono select-none">+</div>
+          </div>
         </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
@@ -472,7 +734,7 @@ export default function Home() {
               <div className="hero-cta flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2 opacity-0">
                 <Link
                   href="/about"
-                  className="group w-full sm:w-auto flex items-center justify-center space-x-2 rounded-2xl bg-primary px-8 py-4 text-base font-semibold text-white shadow-xl shadow-teal-500/25 hover:bg-primary-hover hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                  className="group w-full sm:w-auto flex items-center justify-center space-x-2 rounded-2xl bg-primary hover:bg-primary-hover px-8 py-4 text-base font-semibold text-white shadow-xl shadow-teal-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                 >
                   <span>DISCOVER MORE</span>
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -486,122 +748,348 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Graphics side: High-End Diagnostic Monitor Panel */}
-            <div className="hero-graphic lg:col-span-6 relative flex justify-center items-center opacity-0">
+            {/* Graphics side: High-End Interactive Diagnostic Monitor Panel */}
+            <div className="hero-graphic lg:col-span-6 relative flex justify-center items-center opacity-0 select-none">
               {/* Spinning background rings */}
               <div className="absolute hero-ring-1 h-96 w-96 rounded-full border border-dashed border-primary/20 pointer-events-none"></div>
               <div className="absolute hero-ring-2 h-[450px] w-[450px] rounded-full border border-dotted border-teal-400/20 pointer-events-none"></div>
               
               {/* Main dashboard frame */}
-              <div className="relative w-full max-w-lg rounded-[2.5rem] border border-slate-200/80 bg-white/70 backdrop-blur-xl shadow-2xl p-6 overflow-hidden flex flex-col space-y-6">
+              <div className="monitor-screen-frame relative w-full max-w-lg rounded-[2.5rem] border border-slate-200/80 bg-white/80 backdrop-blur-xl shadow-2xl p-6 overflow-hidden flex flex-col space-y-6">
                 
                 {/* Dashboard top bar */}
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100/80">
                   <div className="flex items-center space-x-2">
-                    <span className="w-3 h-3 rounded-full bg-rose-400"></span>
-                    <span className="w-3 h-3 rounded-full bg-amber-400"></span>
-                    <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
+                    <span className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+                      activeModule === 1 ? "bg-amber-400 animate-pulse" : "bg-slate-300"
+                    }`}></span>
+                    <span className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+                      activeModule === 2 ? "bg-blue-400 animate-pulse" : "bg-slate-300"
+                    }`}></span>
+                    <span className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+                      activeModule === 3 ? "bg-emerald-400 animate-pulse" : "bg-slate-300"
+                    }`}></span>
                     <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 font-mono ml-2">
                       SYS-MONITOR // ACTIVE
                     </span>
                   </div>
-                  <div className="flex items-center space-x-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span className="text-[9px] uppercase font-bold tracking-wider text-emerald-600 font-mono">
-                      LIVE REAGENT INDEX
-                    </span>
+                  <div className="flex items-center">
+                    {activeModule !== 0 && (
+                      <button
+                        onClick={() => setActiveModule(0)}
+                        className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded border border-slate-200 text-[8px] font-bold uppercase tracking-wider font-sans transition-all mr-2 cursor-pointer"
+                      >
+                        RESET OVERVIEW
+                      </button>
+                    )}
+                    <button
+                      onClick={triggerScan}
+                      disabled={isScanning}
+                      className={`px-3 py-1 rounded-lg border text-[8px] uppercase tracking-wider font-bold transition-all duration-300 font-sans cursor-pointer ${
+                        isScanning
+                          ? "bg-rose-500/20 border-rose-500/40 text-rose-600 animate-pulse"
+                          : "bg-teal-500/10 border-teal-500/20 text-teal-600 hover:bg-teal-500/20 hover:border-teal-500/40 shadow-sm"
+                      }`}
+                    >
+                      {isScanning ? "SCANNING..." : "RUN ANALYSIS"}
+                    </button>
                   </div>
                 </div>
 
                 {/* Technical data visualization section */}
-                <div className="h-28 w-full bg-slate-50/50 rounded-2xl border border-slate-100 p-4 flex flex-col justify-between relative overflow-hidden">
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.05)_1px,transparent_1px)] bg-[size:10px_10px] opacity-70"></div>
+                <div className="h-44 w-full bg-slate-950 rounded-2xl border border-slate-900 p-4 flex flex-col justify-between relative overflow-hidden text-white font-mono shadow-inner">
+                  {/* Tech grid overlay */}
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(13,148,136,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(13,148,136,0.04)_1px,transparent_1px)] bg-[size:12px_12px] opacity-70 pointer-events-none z-0"></div>
                   
-                  <div className="flex justify-between items-start relative z-10">
-                    <div>
-                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Calibration Status</span>
-                      <p className="text-lg font-bold text-secondary tracking-tight">OPTIMIZED // 99.98%</p>
+                  {/* Glowing swipe ray effect overlay */}
+                  <div className="absolute top-0 bottom-0 w-[150px] bg-gradient-to-r from-transparent via-teal-500/10 to-transparent pointer-events-none hero-screen-glow z-0"></div>
+
+                  {/* SCREEN 0: SYSTEM OVERVIEW (DEFAULT) */}
+                  <div className={`flex flex-col justify-between h-full transition-all duration-500 ease-out z-10 ${
+                    activeModule === 0 
+                      ? "opacity-100 translate-x-0 scale-100 pointer-events-auto" 
+                      : "opacity-0 -translate-x-4 scale-95 pointer-events-none absolute inset-4"
+                  }`}>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[9px] font-bold text-teal-400 uppercase tracking-widest font-sans">Calibration Status</span>
+                        <p className="text-base font-bold text-white tracking-tight font-mono mt-0.5">
+                          SYS_OK // <span className="calibration-pct">99.98%</span>
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest font-sans">LOCATOR</span>
+                        <p className="text-[10px] text-teal-400 font-semibold font-mono mt-0.5"><span className="hero-coords-x">X: 0</span> <span className="hero-coords-y">Y: 0</span></p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Sensitivity</span>
-                      <p className="text-sm font-semibold text-primary font-mono mt-0.5">High-Level</p>
+
+                    {/* Wave scan */}
+                    <div className="h-10 w-full relative overflow-hidden my-1">
+                      <svg className="w-full h-full" viewBox="0 0 200 50" fill="none" preserveAspectRatio="none">
+                        <g className="hero-wave-group">
+                          <path
+                            d="M0,25 C20,10 30,40 50,25 C70,10 80,40 100,25 C120,10 130,40 150,25 C170,10 180,40 200,25 C220,10 230,40 250,25 C270,10 280,40 300,25"
+                            stroke="#0d9488"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                          />
+                        </g>
+                      </svg>
+                      {/* Laser Scanner Line */}
+                      <div className="absolute top-0 bottom-0 w-0.5 bg-teal-400 shadow-[0_0_8px_#0d9488] hero-scan-beam left-0 pointer-events-none"></div>
+                    </div>
+
+                    {/* Terminal log ticker */}
+                    <div className="text-[8.5px] text-teal-300/80 flex items-center justify-between border-t border-slate-800/80 pt-2 font-mono">
+                      <span className="truncate hero-terminal-text">SYS: IDLE. PRESS 'RUN ANALYSIS' TO TEST.</span>
+                      <span className="text-[7.5px] text-slate-500 font-sans tracking-wide">FLOW: 4.2 mL/s</span>
                     </div>
                   </div>
 
-                  {/* Wavy SVG line representing diagnostic scan data */}
-                  <div className="h-10 w-full relative z-10">
-                    <svg className="w-full h-full" viewBox="0 0 400 50" fill="none" preserveAspectRatio="none">
-                      <path
-                        d="M0,25 C40,40 60,10 100,25 C140,40 160,10 200,25 C240,40 280,10 320,30 C360,40 380,20 400,25"
-                        stroke="#0d9488"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        className="animate-pulse"
-                      />
-                      <path
-                        d="M0,25 C40,40 60,10 100,25 C140,40 160,10 200,25 C240,40 280,10 320,30 C360,40 380,20 400,25 L400,50 L0,50 Z"
-                        fill="url(#teal-grad)"
-                        opacity="0.1"
-                      />
-                      <defs>
-                        <linearGradient id="teal-grad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#0d9488" />
-                          <stop offset="100%" stopColor="#0d9488" stopOpacity="0" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
+                  {/* SCREEN 1: IVD SCREEN */}
+                  <div className={`flex flex-col justify-between h-full transition-all duration-500 ease-out z-10 ${
+                    activeModule === 1 
+                      ? "opacity-100 translate-x-0 scale-100 pointer-events-auto" 
+                      : "opacity-0 translate-x-4 scale-95 pointer-events-none absolute inset-4"
+                  }`}>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[9px] font-bold text-amber-400 uppercase tracking-widest font-sans">In Vitro Diagnostics</span>
+                        <p className="text-sm font-bold text-white tracking-tight mt-0.5">
+                          CLINICAL CHEM // IMMUNOLOGY
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest font-sans">ABSORBANCE</span>
+                        <p className="text-[10px] text-amber-400 font-semibold font-mono mt-0.5">0.421 AU</p>
+                      </div>
+                    </div>
+
+                    {/* Fluctuating spectral chart */}
+                    <div className="h-12 w-full flex items-end justify-between px-1 gap-1 my-1">
+                      {[40, 75, 55, 90, 30, 65, 80, 45, 60, 85, 50, 70].map((val, i) => (
+                        <div key={i} className="flex-1 bg-amber-500/10 border-t border-amber-500/30 rounded-t-sm h-full relative overflow-hidden">
+                          <div className={`w-full bg-gradient-to-t from-amber-600 to-amber-400 rounded-t-sm absolute bottom-0 ivd-chart-bar ivd-chart-bar-${i}`} style={{ height: `${val}%` }}></div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="text-[8.5px] text-amber-300/80 flex items-center justify-between border-t border-slate-800/80 pt-2 font-mono">
+                      <span className="truncate">ANALYZING CHEMICAL SPECTRUM...</span>
+                      <span className="text-[7.5px] text-slate-500 font-sans tracking-wide">TEMP: 37.0°C</span>
+                    </div>
                   </div>
+
+                  {/* SCREEN 2: POC SCREEN */}
+                  <div className={`flex flex-col justify-between h-full transition-all duration-500 ease-out z-10 ${
+                    activeModule === 2 
+                      ? "opacity-100 translate-x-0 scale-100 pointer-events-auto" 
+                      : "opacity-0 translate-x-4 scale-95 pointer-events-none absolute inset-4"
+                  }`}>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[9px] font-bold text-blue-400 uppercase tracking-widest font-sans">Point of Care (POC)</span>
+                        <p className="text-sm font-bold text-white tracking-tight mt-0.5">
+                          RT-PCR MOLECULAR DIAGNOSIS
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest font-sans">CYCLE</span>
+                        <p className="text-[10px] text-blue-400 font-semibold font-mono mt-0.5">34 / 40</p>
+                      </div>
+                    </div>
+
+                    {/* DNA Helix / PCR Curves */}
+                    <div className="h-12 w-full flex items-center justify-between my-1 relative">
+                      <svg className="w-[60%] h-full" viewBox="0 0 120 40">
+                        <path d="M5,35 Q40,35 70,20 T115,5" fill="none" stroke="#2563eb" strokeWidth="1.5" strokeDasharray="3,1.5" opacity="0.3" />
+                        <path d="M5,35 Q40,35 70,20 T115,5" fill="none" stroke="#60a5fa" strokeWidth="2.5" className="poc-curve" />
+                      </svg>
+                      
+                      <div className="w-[35%] h-full flex flex-col justify-center items-center bg-slate-900/60 p-1 border border-slate-800 rounded-lg">
+                        <span className="text-[7px] text-blue-400 font-bold uppercase tracking-wider mb-1 font-sans">DNA SCAN</span>
+                        <div className="flex gap-0.5 justify-center items-end h-4 w-full">
+                          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                            <div key={i} className="w-1 bg-blue-500 rounded-full dna-dot" style={{ height: `${6 + Math.sin(i) * 4}px` }}></div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-[8.5px] text-blue-300/80 flex items-center justify-between border-t border-slate-800/80 pt-2 font-mono">
+                      <span className="truncate">AMPLIFYING SAMPLE RNA SEQUENCE...</span>
+                      <span className="text-[7.5px] text-slate-500 font-sans tracking-wide">CT: 24.50</span>
+                    </div>
+                  </div>
+
+                  {/* SCREEN 3: STERILIZATION SCREEN */}
+                  <div className={`flex flex-col justify-between h-full transition-all duration-500 ease-out z-10 ${
+                    activeModule === 3 
+                      ? "opacity-100 translate-x-0 scale-100 pointer-events-auto" 
+                      : "opacity-0 translate-x-4 scale-95 pointer-events-none absolute inset-4"
+                  }`}>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest font-sans">Sterilization & Hygiene</span>
+                        <p className="text-sm font-bold text-white tracking-tight mt-0.5">
+                          STERILIZER DISINFECTANT INDEX
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest font-sans">KILL RATE</span>
+                        <p className="text-[10px] text-emerald-400 font-bold font-mono mt-0.5">99.999%</p>
+                      </div>
+                    </div>
+
+                    {/* Pathogen breakdown / UV scan grid */}
+                    <div className="h-12 w-full flex items-center justify-center my-1 relative overflow-hidden bg-slate-950 border border-slate-900 rounded-xl">
+                      <div className="absolute inset-0 bg-emerald-500/5 animate-pulse"></div>
+                      <div className="flex flex-wrap gap-1.5 justify-center items-center px-4 w-full">
+                        {[...Array(14)].map((_, i) => (
+                          <div key={i} className={`h-2.5 w-2.5 rounded-full border border-emerald-500/30 pathogen-dot pathogen-dot-${i}`} style={{ backgroundColor: 'rgba(16, 185, 129, 0.35)' }}></div>
+                        ))}
+                      </div>
+                      <div className="absolute top-0 bottom-0 w-0.5 bg-emerald-400 shadow-[0_0_10px_#10b981] clean-scan-beam left-0 pointer-events-none"></div>
+                    </div>
+
+                    <div className="text-[8.5px] text-emerald-300/80 flex items-center justify-between border-t border-slate-800/80 pt-2 font-mono">
+                      <span className="truncate">PATHOGEN CELL BREAKDOWN COMPLETED...</span>
+                      <span className="text-[7.5px] text-slate-500 font-sans tracking-wide">UV-C: ACTIVE</span>
+                    </div>
+                  </div>
+
                 </div>
 
-                {/* Overlapping modules / details */}
+                {/* Overlapping modules / interactive tabs */}
                 <div className="space-y-4">
                   {/* Module 1: IVD */}
-                  <div className="floating-element-1 flex items-center justify-between p-4 bg-white/90 border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+                  <button
+                    onClick={() => setActiveModule(activeModule === 1 ? 0 : 1)}
+                    className={`group w-full flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 text-left select-none cursor-pointer ${
+                      activeModule === 1 
+                        ? "bg-amber-500/10 border-amber-400/80 shadow-md shadow-amber-500/5 pointer-events-auto" 
+                        : "bg-white/90 border-slate-100 hover:bg-slate-50/80 hover:border-slate-200 pointer-events-auto"
+                    } ${activeModule !== 0 && activeModule !== 1 ? "opacity-40 scale-[0.98]" : "scale-100"} floating-element-1`}
+                  >
                     <div className="flex items-center space-x-3.5">
-                      <div className="p-2.5 bg-teal-50 text-primary rounded-xl border border-teal-100/50">
+                      <div className={`p-2.5 rounded-xl border transition-all duration-300 ${
+                        activeModule === 1
+                          ? "bg-amber-500 text-white border-amber-600 shadow-inner"
+                          : "bg-amber-50 text-amber-600 border-amber-100 group-hover:scale-110 group-hover:rotate-3"
+                      }`}>
                         <Microscope className="h-5 w-5" />
                       </div>
-                      <div className="text-left">
-                        <h3 className="text-sm font-bold text-secondary">In Vitro Diagnostics</h3>
-                        <p className="text-xs text-slate-500 mt-0.5">Clinical chemistry & microbiology systems</p>
+                      <div>
+                        <h3 className={`text-sm font-bold transition-colors ${
+                          activeModule === 1 ? "text-amber-900" : "text-secondary"
+                        }`}>In Vitro Diagnostics</h3>
+                        <p className="text-[11px] text-slate-500 mt-0.5">Clinical chemistry & microbiology reagents</p>
                       </div>
                     </div>
-                    <span className="text-[10px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                      Module 01
-                    </span>
-                  </div>
+                    <div className="flex items-center space-x-2">
+                      {activeModule === 1 ? (
+                        <span className="flex h-2 w-2 relative">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                        </span>
+                      ) : (
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 group-hover:bg-slate-400 transition-colors"></span>
+                      )}
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider transition-colors ${
+                        activeModule === 1
+                          ? "text-amber-800 bg-amber-500/20"
+                          : "text-slate-400 bg-slate-100 group-hover:text-slate-500"
+                      }`}>
+                        {activeModule === 1 ? "ACTIVE" : "SELECT"}
+                      </span>
+                    </div>
+                  </button>
 
                   {/* Module 2: Point of Care */}
-                  <div className="floating-element-2 flex items-center justify-between p-4 bg-white/90 border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+                  <button
+                    onClick={() => setActiveModule(activeModule === 2 ? 0 : 2)}
+                    className={`group w-full flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 text-left select-none cursor-pointer ${
+                      activeModule === 2 
+                        ? "bg-blue-500/10 border-blue-400/80 shadow-md shadow-blue-500/5 pointer-events-auto" 
+                        : "bg-white/90 border-slate-100 hover:bg-slate-50/80 hover:border-slate-200 pointer-events-auto"
+                    } ${activeModule !== 0 && activeModule !== 2 ? "opacity-40 scale-[0.98]" : "scale-100"} floating-element-2`}
+                  >
                     <div className="flex items-center space-x-3.5">
-                      <div className="p-2.5 bg-teal-50 text-primary rounded-xl border border-teal-100/50">
+                      <div className={`p-2.5 rounded-xl border transition-all duration-300 ${
+                        activeModule === 2
+                          ? "bg-blue-500 text-white border-blue-600 shadow-inner"
+                          : "bg-blue-50 text-blue-600 border-blue-100 group-hover:scale-110 group-hover:-rotate-3"
+                      }`}>
                         <Dna className="h-5 w-5" />
                       </div>
-                      <div className="text-left">
-                        <h3 className="text-sm font-bold text-secondary">Point of Care (POC)</h3>
-                        <p className="text-xs text-slate-500 mt-0.5">Molecular biology near-patient testing</p>
+                      <div>
+                        <h3 className={`text-sm font-bold transition-colors ${
+                          activeModule === 2 ? "text-blue-900" : "text-secondary"
+                        }`}>Point of Care (POC)</h3>
+                        <p className="text-[11px] text-slate-500 mt-0.5">Molecular biology near-patient systems</p>
                       </div>
                     </div>
-                    <span className="text-[10px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                      Module 02
-                    </span>
-                  </div>
+                    <div className="flex items-center space-x-2">
+                      {activeModule === 2 ? (
+                        <span className="flex h-2 w-2 relative">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                        </span>
+                      ) : (
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 group-hover:bg-slate-400 transition-colors"></span>
+                      )}
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider transition-colors ${
+                        activeModule === 2
+                          ? "text-blue-800 bg-blue-500/20"
+                          : "text-slate-400 bg-slate-100 group-hover:text-slate-500"
+                      }`}>
+                        {activeModule === 2 ? "ACTIVE" : "SELECT"}
+                      </span>
+                    </div>
+                  </button>
 
                   {/* Module 3: Disinfection */}
-                  <div className="floating-element-3 flex items-center justify-between p-4 bg-white/90 border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+                  <button
+                    onClick={() => setActiveModule(activeModule === 3 ? 0 : 3)}
+                    className={`group w-full flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 text-left select-none cursor-pointer ${
+                      activeModule === 3 
+                        ? "bg-emerald-500/10 border-emerald-400/80 shadow-md shadow-emerald-500/5 pointer-events-auto" 
+                        : "bg-white/90 border-slate-100 hover:bg-slate-50/80 hover:border-slate-200 pointer-events-auto"
+                    } ${activeModule !== 0 && activeModule !== 3 ? "opacity-40 scale-[0.98]" : "scale-100"} floating-element-3`}
+                  >
                     <div className="flex items-center space-x-3.5">
-                      <div className="p-2.5 bg-teal-50 text-primary rounded-xl border border-teal-100/50">
+                      <div className={`p-2.5 rounded-xl border transition-all duration-300 ${
+                        activeModule === 3
+                          ? "bg-emerald-500 text-white border-emerald-600 shadow-inner"
+                          : "bg-emerald-50 text-emerald-600 border-emerald-100 group-hover:scale-110 group-hover:rotate-3"
+                      }`}>
                         <ShieldCheck className="h-5 w-5" />
                       </div>
-                      <div className="text-left">
-                        <h3 className="text-sm font-bold text-secondary">Sterilization & Hygiene</h3>
-                        <p className="text-xs text-slate-500 mt-0.5">Instrument & surface chemical sterilizers</p>
+                      <div>
+                        <h3 className={`text-sm font-bold transition-colors ${
+                          activeModule === 3 ? "text-emerald-900" : "text-secondary"
+                        }`}>Sterilization & Hygiene</h3>
+                        <p className="text-[11px] text-slate-500 mt-0.5">Instrument & surface chemical sterilizers</p>
                       </div>
                     </div>
-                    <span className="text-[10px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                      Module 03
-                    </span>
-                  </div>
+                    <div className="flex items-center space-x-2">
+                      {activeModule === 3 ? (
+                        <span className="flex h-2 w-2 relative">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                      ) : (
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 group-hover:bg-slate-400 transition-colors"></span>
+                      )}
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider transition-colors ${
+                        activeModule === 3
+                          ? "text-emerald-800 bg-emerald-500/20"
+                          : "text-slate-400 bg-slate-100 group-hover:text-slate-500"
+                      }`}>
+                        {activeModule === 3 ? "ACTIVE" : "SELECT"}
+                      </span>
+                    </div>
+                  </button>
                 </div>
 
               </div>
