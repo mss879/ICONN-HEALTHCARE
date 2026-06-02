@@ -433,23 +433,23 @@ export default function Home() {
         </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 items-center">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-12 items-center">
             
             {/* Text details */}
-            <div className="lg:col-span-7 text-center lg:text-left space-y-6">
-              <div className="hero-tag inline-flex items-center space-x-2 rounded-full bg-primary-light px-4 py-1.5 border border-primary/20 opacity-0 shadow-sm">
-                <ShieldCheck className="h-4.5 w-4.5 text-primary" />
-                <span className="text-xs font-bold uppercase tracking-wider text-primary">
+            <div className="lg:col-span-6 text-center lg:text-left space-y-7">
+              <div className="hero-tag inline-flex items-center space-x-2 rounded-full bg-teal-500/10 border border-teal-500/20 px-4 py-1.5 shadow-sm opacity-0">
+                <span className="h-2 w-2 rounded-full bg-primary animate-ping"></span>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-primary-hover">
                   ICONN HEALTHCARE PVT LTD
                 </span>
               </div>
               
-              <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl font-black text-secondary tracking-tight leading-none select-none">
+              <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl font-black text-secondary tracking-tight leading-[1.05] select-none">
                 <div className="overflow-hidden py-1">
                   <span className="inline-block hero-title-line opacity-0">Reassuring</span>
                 </div>
                 <div className="overflow-hidden py-1">
-                  <span className="inline-block hero-title-line text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-hover opacity-0">
+                  <span className="inline-block hero-title-line text-transparent bg-clip-text bg-gradient-to-r from-primary to-teal-600 font-extrabold opacity-0">
                     Quality
                   </span>{" "}
                   <span className="inline-block hero-title-line opacity-0">in Diagnostics.</span>
@@ -459,6 +459,15 @@ export default function Home() {
               <p className="hero-desc max-w-xl mx-auto lg:mx-0 text-base sm:text-lg text-secondary-light font-normal leading-relaxed opacity-0">
                 Delivering high-value diagnostic solutions to laboratories, hospitals, and clinics across Sri Lanka. Empowering medical professionals with rapid and accurate results to determine the optimal course of treatment.
               </p>
+
+              {/* Core focus badges */}
+              <div className="hero-desc flex flex-wrap justify-center lg:justify-start gap-2 pt-1 opacity-0">
+                {["In Vitro Diagnostics", "Point of Care", "Lab Reagents", "Sterilizing Agents"].map((badge, i) => (
+                  <span key={i} className="text-[11px] font-bold px-3 py-1 bg-slate-100/60 border border-slate-200/40 rounded-lg text-secondary-light">
+                    {badge}
+                  </span>
+                ))}
+              </div>
               
               <div className="hero-cta flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2 opacity-0">
                 <Link
@@ -470,55 +479,131 @@ export default function Home() {
                 </Link>
                 <Link
                   href="/products"
-                  className="w-full sm:w-auto flex items-center justify-center space-x-2 rounded-2xl border border-card-border bg-card-bg/60 px-8 py-4 text-base font-semibold text-secondary hover:bg-white hover:shadow-md transition-all duration-200"
+                  className="w-full sm:w-auto flex items-center justify-center space-x-2 rounded-2xl border border-slate-200 bg-white/80 px-8 py-4 text-base font-semibold text-secondary hover:bg-white hover:shadow-md transition-all duration-200"
                 >
                   <span>Our Products</span>
                 </Link>
               </div>
             </div>
 
-            {/* Graphics side */}
-            <div className="hero-graphic lg:col-span-5 relative flex justify-center items-center h-[350px] md:h-[450px] opacity-0">
+            {/* Graphics side: High-End Diagnostic Monitor Panel */}
+            <div className="hero-graphic lg:col-span-6 relative flex justify-center items-center opacity-0">
               {/* Spinning background rings */}
-              <div className="absolute hero-ring-1 h-72 w-72 md:h-85 md:w-85 rounded-full border border-dashed border-primary/20"></div>
-              <div className="absolute hero-ring-2 h-80 w-80 md:h-96 md:w-96 rounded-full border border-dotted border-teal-400/20"></div>
+              <div className="absolute hero-ring-1 h-96 w-96 rounded-full border border-dashed border-primary/20 pointer-events-none"></div>
+              <div className="absolute hero-ring-2 h-[450px] w-[450px] rounded-full border border-dotted border-teal-400/20 pointer-events-none"></div>
               
-              <div className="absolute h-64 w-64 md:h-72 md:w-72 rounded-full border border-card-border bg-gradient-to-tr from-primary-light/30 to-teal-500/5 shadow-inner"></div>
-              
-              <div className="floating-element-1 absolute top-2 left-2 md:left-6 w-60 glass p-5 rounded-3xl shadow-xl border border-card-border/80 bg-white/90">
-                <div className="flex items-center space-x-3">
-                  <div className="rounded-xl bg-primary-light p-2.5 text-primary">
-                    <Microscope className="h-6 w-6" />
+              {/* Main dashboard frame */}
+              <div className="relative w-full max-w-lg rounded-[2.5rem] border border-slate-200/80 bg-white/70 backdrop-blur-xl shadow-2xl p-6 overflow-hidden flex flex-col space-y-6">
+                
+                {/* Dashboard top bar */}
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-3 h-3 rounded-full bg-rose-400"></span>
+                    <span className="w-3 h-3 rounded-full bg-amber-400"></span>
+                    <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 font-mono ml-2">
+                      SYS-MONITOR // ACTIVE
+                    </span>
                   </div>
-                  <div>
-                    <h3 className="text-xs uppercase font-bold text-primary tracking-wider">In Vitro Diagnostics</h3>
-                    <p className="text-sm font-bold text-secondary mt-0.5">Clinical Chemistry</p>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="text-[9px] uppercase font-bold tracking-wider text-emerald-600 font-mono">
+                      LIVE REAGENT INDEX
+                    </span>
                   </div>
                 </div>
-                <div className="mt-3 flex items-center space-x-2 text-xs text-secondary-light">
-                  <span className="inline-block h-2 w-2 rounded-full bg-primary"></span>
-                  <span>Sri Lanka Tender Participant</span>
-                </div>
-              </div>
 
-              <div className="floating-element-2 absolute bottom-2 right-2 md:right-6 w-56 glass p-5 rounded-3xl shadow-xl border border-card-border/80 bg-white/90">
-                <div className="flex items-center space-x-3">
-                  <div className="rounded-xl bg-primary-light p-2.5 text-primary">
-                    <Dna className="h-6 w-6" />
+                {/* Technical data visualization section */}
+                <div className="h-28 w-full bg-slate-50/50 rounded-2xl border border-slate-100 p-4 flex flex-col justify-between relative overflow-hidden">
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.05)_1px,transparent_1px)] bg-[size:10px_10px] opacity-70"></div>
+                  
+                  <div className="flex justify-between items-start relative z-10">
+                    <div>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Calibration Status</span>
+                      <p className="text-lg font-bold text-secondary tracking-tight">OPTIMIZED // 99.98%</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Sensitivity</span>
+                      <p className="text-sm font-semibold text-primary font-mono mt-0.5">High-Level</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xs uppercase font-bold text-primary tracking-wider">Point of Care</h3>
-                    <p className="text-sm font-bold text-secondary mt-0.5">Molecular Biology</p>
-                  </div>
-                </div>
-                <div className="mt-3 text-xs text-secondary-light">
-                  Reliable instrument & surface disinfectants.
-                </div>
-              </div>
 
-              <div className="floating-element-3 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 glass p-4 rounded-2xl shadow-lg border border-card-border flex items-center space-x-3 justify-center bg-white/95">
-                <Activity className="h-5 w-5 text-primary animate-pulse" />
-                <span className="text-xs font-semibold text-secondary">POC Devices</span>
+                  {/* Wavy SVG line representing diagnostic scan data */}
+                  <div className="h-10 w-full relative z-10">
+                    <svg className="w-full h-full" viewBox="0 0 400 50" fill="none" preserveAspectRatio="none">
+                      <path
+                        d="M0,25 C40,40 60,10 100,25 C140,40 160,10 200,25 C240,40 280,10 320,30 C360,40 380,20 400,25"
+                        stroke="#0d9488"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        className="animate-pulse"
+                      />
+                      <path
+                        d="M0,25 C40,40 60,10 100,25 C140,40 160,10 200,25 C240,40 280,10 320,30 C360,40 380,20 400,25 L400,50 L0,50 Z"
+                        fill="url(#teal-grad)"
+                        opacity="0.1"
+                      />
+                      <defs>
+                        <linearGradient id="teal-grad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#0d9488" />
+                          <stop offset="100%" stopColor="#0d9488" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Overlapping modules / details */}
+                <div className="space-y-4">
+                  {/* Module 1: IVD */}
+                  <div className="floating-element-1 flex items-center justify-between p-4 bg-white/90 border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="flex items-center space-x-3.5">
+                      <div className="p-2.5 bg-teal-50 text-primary rounded-xl border border-teal-100/50">
+                        <Microscope className="h-5 w-5" />
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-sm font-bold text-secondary">In Vitro Diagnostics</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">Clinical chemistry & microbiology systems</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                      Module 01
+                    </span>
+                  </div>
+
+                  {/* Module 2: Point of Care */}
+                  <div className="floating-element-2 flex items-center justify-between p-4 bg-white/90 border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="flex items-center space-x-3.5">
+                      <div className="p-2.5 bg-teal-50 text-primary rounded-xl border border-teal-100/50">
+                        <Dna className="h-5 w-5" />
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-sm font-bold text-secondary">Point of Care (POC)</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">Molecular biology near-patient testing</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                      Module 02
+                    </span>
+                  </div>
+
+                  {/* Module 3: Disinfection */}
+                  <div className="floating-element-3 flex items-center justify-between p-4 bg-white/90 border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="flex items-center space-x-3.5">
+                      <div className="p-2.5 bg-teal-50 text-primary rounded-xl border border-teal-100/50">
+                        <ShieldCheck className="h-5 w-5" />
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-sm font-bold text-secondary">Sterilization & Hygiene</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">Instrument & surface chemical sterilizers</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                      Module 03
+                    </span>
+                  </div>
+                </div>
+
               </div>
             </div>
 
