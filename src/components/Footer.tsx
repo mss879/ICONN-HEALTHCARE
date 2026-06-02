@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Heart, MapPin, Phone, Mail, ChevronUp } from "lucide-react";
 
 export default function Footer() {
@@ -101,10 +102,29 @@ export default function Footer() {
         </div>
 
         {/* Bottom copyright and Scroll-to-Top */}
-        <div className="mt-16 pt-8 border-t border-card-border/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-500 text-center sm:text-left">
-            &copy; {new Date().getFullYear()} Iconn Healthcare Pvt Ltd. All rights reserved. Sri Lanka.
-          </p>
+        <div className="mt-16 pt-8 border-t border-card-border/10 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left">
+            <p className="text-xs text-gray-500">
+              &copy; {new Date().getFullYear()} Iconn Healthcare Pvt Ltd. All rights reserved. Sri Lanka.
+            </p>
+            <div className="flex items-center space-x-2 text-xs text-gray-500">
+              <span>Built & Designed by</span>
+              <a 
+                href="https://arc.ai" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center hover:scale-110 transition-all duration-200"
+                title="Arc AI - High-End Web Development & AI Solutions"
+                aria-label="Arc AI"
+              >
+                <img 
+                  src="/arclogo.webp" 
+                  alt="Arc AI Logo" 
+                  className="h-7 w-auto object-contain transition-all duration-200" 
+                />
+              </a>
+            </div>
+          </div>
           <button
             onClick={scrollToTop}
             className="group flex items-center justify-center h-10 w-10 rounded-xl bg-card-bg/10 border border-card-border/20 text-gray-400 hover:text-white hover:bg-primary hover:border-primary transition-all duration-300 shadow-md"

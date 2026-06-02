@@ -209,7 +209,7 @@ export default function Home() {
     activeModuleRef.current = activeModule;
   }, [activeModule]);
 
-  // Dynamic Scan Trigger function
+  // Calm Scan Trigger function
   const triggerScan = () => {
     if (isScanning) return;
     setIsScanning(true);
@@ -231,30 +231,30 @@ export default function Home() {
         terminalText.textContent = stages[stage];
         stage++;
       }
-    }, 700);
+    }, 900);
 
-    // Speed up sweep scanner and waveform during interactive analysis
-    gsap.to(".hero-scan-beam", { duration: 0.5, repeat: 5, ease: "power1.inOut" });
-    gsap.to(".clean-scan-beam", { duration: 0.4, repeat: 7, ease: "power1.inOut" });
-    gsap.to(".hero-wave-group", { x: -200, duration: 0.9, repeat: 3, ease: "none" });
+    // Speed up sweep scanner and waveform during interactive analysis (moderately)
+    gsap.to(".hero-scan-beam", { duration: 1.0, repeat: 3, ease: "power1.inOut" });
+    gsap.to(".clean-scan-beam", { duration: 0.8, repeat: 4, ease: "power1.inOut" });
+    gsap.to(".hero-wave-group", { x: -200, duration: 1.5, repeat: 2, ease: "none" });
     
-    // Subtle physical machine vibration feedback
+    // Very faint, almost imperceptible chassis vibration
     gsap.to(monitorFrame, {
-      x: () => (Math.random() - 0.5) * 5,
-      y: () => (Math.random() - 0.5) * 5,
-      duration: 0.05,
-      repeat: 24,
+      x: () => (Math.random() - 0.5) * 1.5,
+      y: () => (Math.random() - 0.5) * 1.5,
+      duration: 0.08,
+      repeat: 12,
       yoyo: true,
       ease: "none",
       onComplete: () => {
-        gsap.to(monitorFrame, { x: 0, y: 0, duration: 0.1 });
+        gsap.to(monitorFrame, { x: 0, y: 0, duration: 0.15 });
       }
     });
 
     // Intense diagnostic laser visual flash sweep
     gsap.fromTo(".hero-screen-glow", 
       { opacity: 0, x: "-100%" },
-      { opacity: 0.95, x: "100%", duration: 1.2, repeat: 1, ease: "power2.inOut" }
+      { opacity: 0.6, x: "100%", duration: 1.8, repeat: 1, ease: "power2.inOut" }
     );
 
     // Calibration percent counts up rapidly and stabilizes at pure high-level state
@@ -263,7 +263,7 @@ export default function Home() {
       { val: 86.20 },
       {
         val: 99.99,
-        duration: 2.8,
+        duration: 3.5,
         ease: "power2.inOut",
         onUpdate: () => {
           if (calibrationPct) {
@@ -277,9 +277,9 @@ export default function Home() {
             terminalText.textContent = "SYS: SCAN COMPLETED. RESOLUTIONS OPTIMAL.";
           }
           // Restore normal idling scan timing speeds
-          gsap.to(".hero-scan-beam", { duration: 3.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
-          gsap.to(".clean-scan-beam", { duration: 2.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
-          gsap.to(".hero-wave-group", { x: -100, duration: 3.2, repeat: -1, ease: "none" });
+          gsap.to(".hero-scan-beam", { duration: 5.0, repeat: -1, yoyo: true, ease: "sine.inOut" });
+          gsap.to(".clean-scan-beam", { duration: 3.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
+          gsap.to(".hero-wave-group", { x: -100, duration: 6.5, repeat: -1, ease: "none" });
         }
       }
     );
@@ -309,25 +309,19 @@ export default function Home() {
       
       // Reset opacities before animating to prevent flash of content
       gsap.set([
-        ".hero-tag", 
         ".hero-title-line", 
         ".hero-desc", 
         ".hero-cta", 
-        ".hero-graphic", 
-        ".floating-element-1", 
-        ".floating-element-2", 
+        ".hero-graphic",
+        ".floating-element-1",
+        ".floating-element-2",
         ".floating-element-3"
       ], { opacity: 0 });
 
-      // Tagline entrance
-      tl.fromTo(".hero-tag", 
-        { opacity: 0, y: -20 }, 
-        { opacity: 1, y: 0, duration: 0.8, delay: 0.2 }
-      )
       // Smooth slide-up lines for the title
-      .fromTo(".hero-title-line", 
+      tl.fromTo(".hero-title-line", 
         { opacity: 0, y: 45 }, 
-        { opacity: 1, y: 0, duration: 0.85, stagger: 0.2, ease: "power2.out" },
+        { opacity: 1, y: 0, duration: 0.85, stagger: 0.2, ease: "power2.out", delay: 0.2 },
         "-=0.55"
       )
       // Description detail reveal
@@ -344,67 +338,184 @@ export default function Home() {
       )
       // Graphics base ring/shadow frame reveal
       .fromTo(".hero-graphic", 
-        { opacity: 0 }, 
-        { opacity: 1, duration: 0.8 }, 
-        "-=0.6"
-      )
-      // STEP-BY-STEP SEQUENTIAL DISCOVERY (Tells the company's story)
-      // 1. In Vitro Diagnostics card reveal
-      .fromTo(".floating-element-1", 
-        { opacity: 0, scale: 0.92, y: 30 }, 
-        { opacity: 1, scale: 1, y: 0, duration: 0.9, ease: "back.out(1.2)" }, 
-        "-=0.25"
-      )
-      // 2. Point of Care card reveal
-      .fromTo(".floating-element-2", 
-        { opacity: 0, scale: 0.92, y: -30 }, 
-        { opacity: 1, scale: 1, y: 0, duration: 0.9, ease: "back.out(1.2)" }, 
+        { opacity: 0, y: 20 }, 
+        { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" }, 
         "-=0.5"
       )
-      // 3. Central POC Devices highlight card reveal
-      .fromTo(".floating-element-3", 
-        { opacity: 0, scale: 0.75 }, 
-        { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" }, 
-        "-=0.45"
+      // Staggered fade and scale reveal of the module cards (prevents overlap/jumps)
+      .fromTo(".floating-element-1",
+        { opacity: 0, scale: 0.98 },
+        { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" },
+        "-=0.4"
+      )
+      .fromTo(".floating-element-2",
+        { opacity: 0, scale: 0.98 },
+        { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" },
+        "-=0.35"
+      )
+      .fromTo(".floating-element-3",
+        { opacity: 0, scale: 0.98 },
+        { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" },
+        "-=0.35"
       );
 
-      // Mild background drift animation for blobs
+      // Slower, ambient background drift animation for blobs
       gsap.to(".hero-bg-blob-1", {
-        x: 40,
-        y: 25,
-        duration: 9,
+        x: 35,
+        y: 20,
+        duration: 18,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut"
       });
       gsap.to(".hero-bg-blob-2", {
-        x: -30,
-        y: -20,
-        duration: 11,
+        x: -25,
+        y: -15,
+        duration: 22,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut"
       });
 
-      // Infinitely rotate background decorative rings in opposite directions
-      gsap.to(".hero-ring-1", { rotation: 360, duration: 35, repeat: -1, ease: "none" });
-      gsap.to(".hero-ring-2", { rotation: -360, duration: 45, repeat: -1, ease: "none" });
+      // Interactive background particles floating movement (extremely slow and subtle)
+      const particles = [".floating-particle-1", ".floating-particle-2", ".floating-particle-3", ".floating-particle-4"];
+      particles.forEach((p, idx) => {
+        gsap.to(p, {
+          x: () => (idx % 2 === 0 ? 25 : -25) + Math.random() * 15,
+          y: () => (idx % 2 === 0 ? -30 : 30) + Math.random() * 15,
+          rotation: () => Math.random() * 180,
+          duration: 12 + idx * 4,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+      });
 
-      // Very subtle, natural floating hover drift
-      gsap.to(".floating-element-1", { y: 8, duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut" });
-      gsap.to(".floating-element-2", { y: -8, duration: 4.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
-      gsap.to(".floating-element-3", { scale: 1.025, duration: 5, repeat: -1, yoyo: true, ease: "sine.inOut" });
+      // Faint background decorative rings rotating extremely slowly
+      gsap.to(".hero-ring-1", { rotation: 360, duration: 75, repeat: -1, ease: "none" });
+      gsap.to(".hero-ring-2", { rotation: -360, duration: 90, repeat: -1, ease: "none" });
 
-      // Seamless wave scrolling animation for diagnostic panel
-      gsap.to(".hero-wave-group", {
-        x: -100,
-        duration: 3.2,
+      // Clean horizontal wave scrolls for reagent microfluidics flow rate (Screen 0)
+      gsap.to(".reagent-flow-wave-1", {
+        x: -20,
+        duration: 3.5,
+        repeat: -1,
+        ease: "none"
+      });
+      gsap.to(".reagent-flow-wave-2", {
+        x: 20,
+        duration: 4.5,
         repeat: -1,
         ease: "none"
       });
 
-      // Laser sweep scanner animation
+      // Laser sweep scanner animation (slow and calm)
       gsap.fromTo(".hero-scan-beam",
+        { left: "0%" },
+        {
+          left: "100%",
+          duration: 5.0,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        }
+      );
+
+      // Calibration circular arc filling & percentage counter ticking animation
+      gsap.fromTo(".calibration-arc", 
+        { strokeDashoffset: 125.6 }, 
+        { strokeDashoffset: 12.5, duration: 3.0, ease: "power2.out", delay: 0.4 }
+      );
+
+      const countObj = { val: 92.45 };
+      gsap.to(countObj, {
+        val: 99.98,
+        duration: 3.0,
+        delay: 0.4,
+        ease: "power2.out",
+        onUpdate: () => {
+          const el = document.querySelector(".calibration-pct");
+          if (el) el.textContent = countObj.val.toFixed(1) + "%";
+        },
+        onComplete: () => {
+          // Subtle, microscopic fluctuations representing system stability
+          gsap.to(countObj, {
+            val: 99.99,
+            duration: 2.5,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            onUpdate: () => {
+              const el = document.querySelector(".calibration-pct");
+              if (el) {
+                const val = 99.97 + (Math.sin(gsap.ticker.time * 1.2) * 0.01);
+                el.textContent = val.toFixed(2) + "%";
+              }
+            }
+          });
+        }
+      });
+
+      // IVD Mode: Live Fluctuating Reaction Rate Bars (clinical chemistry simulation)
+      for (let i = 0; i < 4; i++) {
+        gsap.to(`.ivd-test-bar-${i}`, {
+          width: () => `${25 + Math.random() * 65}%`,
+          duration: () => 1.5 + Math.random() * 1.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+      }
+
+      // POC Mode: Double-helix rotating DNA strand simulation
+      const dnaPairs = gsap.utils.toArray(".dna-pair");
+      dnaPairs.forEach((pair: any, i) => {
+        const line = pair.querySelector(".dna-line");
+        const dotLeft = pair.querySelector(".dna-dot-left");
+        const dotRight = pair.querySelector(".dna-dot-right");
+        
+        const tlDna = gsap.timeline({ repeat: -1, yoyo: true });
+        tlDna.fromTo(line, 
+          { attr: { x1: 12, x2: 48 } }, 
+          { attr: { x1: 48, x2: 12 }, duration: 2.2, ease: "sine.inOut" }, 0
+        )
+        .fromTo(dotLeft, 
+          { attr: { cx: 12 }, scale: 1.2 }, 
+          { attr: { cx: 48 }, scale: 0.8, duration: 2.2, ease: "sine.inOut" }, 0
+        )
+        .fromTo(dotRight, 
+          { attr: { cx: 48 }, scale: 0.8 }, 
+          { attr: { cx: 12 }, scale: 1.2, duration: 2.2, ease: "sine.inOut" }, 0
+        );
+        
+        tlDna.delay(i * 0.22);
+      });
+
+      // POC Mode: RT-PCR amplification curve loop drawing
+      gsap.fromTo(".poc-curve",
+        { strokeDasharray: "150", strokeDashoffset: "150" },
+        {
+          strokeDashoffset: 0,
+          duration: 4.5,
+          repeat: -1,
+          ease: "power1.inOut"
+        }
+      );
+
+      // Sterilization Mode: Pathogen cell disintegration micro-animations (slow pulse)
+      for (let i = 0; i < 12; i++) {
+        gsap.to(`.pathogen-dot-${i}`, {
+          opacity: () => 0.2 + Math.random() * 0.6,
+          scale: () => 0.7 + Math.random() * 0.4,
+          duration: () => 1.2 + Math.random() * 1.2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+      }
+
+      // Sterilization Mode: Clean UV scan beam sweep (slow)
+      gsap.fromTo(".clean-scan-beam",
         { left: "0%" },
         {
           left: "100%",
@@ -415,106 +526,18 @@ export default function Home() {
         }
       );
 
-      // Calibration readout counter ticking animation
-      const countObj = { val: 92.45 };
-      gsap.to(countObj, {
-        val: 99.98,
-        duration: 2.8,
-        delay: 0.5,
-        ease: "power2.out",
-        onUpdate: () => {
-          const el = document.querySelector(".calibration-pct");
-          if (el) el.textContent = countObj.val.toFixed(2) + "%";
-        },
-        onComplete: () => {
-          // Dynamic tiny fluctuations to represent live diagnostics reading
-          gsap.to(countObj, {
-            val: 99.99,
-            duration: 1.8,
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut",
-            onUpdate: () => {
-              const el = document.querySelector(".calibration-pct");
-              if (el) {
-                const val = 99.97 + (Math.sin(gsap.ticker.time * 2.5) * 0.015);
-                el.textContent = val.toFixed(2) + "%";
-              }
-            }
-          });
-        }
-      });
-
-      // IVD Mode: Live Fluctuating Bar Charts (Simulating live laboratory testing)
-      for (let i = 0; i < 12; i++) {
-        gsap.to(`.ivd-chart-bar-${i}`, {
-          height: () => `${20 + Math.random() * 75}%`,
-          duration: () => 0.5 + Math.random() * 0.8,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
-        });
-      }
-
-      // POC Mode: DNA segment base-pair matching simulation
-      gsap.to(".dna-dot", {
-        scaleY: 0.35,
-        duration: 0.65,
-        stagger: {
-          each: 0.1,
-          repeat: -1,
-          yoyo: true
-        },
-        ease: "sine.inOut"
-      });
-
-      // POC Mode: RT-PCR amplification curve loop drawing
-      gsap.fromTo(".poc-curve",
-        { strokeDasharray: "200", strokeDashoffset: "200" },
-        {
-          strokeDashoffset: 0,
-          duration: 3,
-          repeat: -1,
-          ease: "power1.inOut"
-        }
-      );
-
-      // Sterilization Mode: Pathogen cell disintegration micro-animations
-      for (let i = 0; i < 14; i++) {
-        gsap.to(`.pathogen-dot-${i}`, {
-          opacity: () => 0.15 + Math.random() * 0.8,
-          scale: () => 0.4 + Math.random() * 0.8,
-          duration: () => 0.5 + Math.random() * 0.7,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
-        });
-      }
-
-      // Sterilization Mode: Clean UV scan beam sweep
-      gsap.fromTo(".clean-scan-beam",
-        { left: "0%" },
-        {
-          left: "100%",
-          duration: 2.2,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
-        }
-      );
-
-      // Overview Mode: Typewriter-like live logs system update ticker
+      // Overview Mode: Typewriter-like live logs system update ticker (slower cycle)
       const sysLogs = [
-        "SYS: READY. WAITING FOR PATIENT SAMPLE...",
-        "SYS: PATIENT REAGENTS LEVEL MATCHED: OK.",
-        "SYS: CALIBRATING VOLTAGE AND APERTURE...",
-        "SYS: DUAL SCAN SCANNER STATUS: STABLE.",
-        "SYS: IDLE. PRESS 'RUN ANALYSIS' TO TEST."
+        "SYS: READY. SYSTEM CHECK: NOMINAL.",
+        "SYS: WAITING FOR TEST SELECTION...",
+        "SYS: REAGENT FLOW CELLS CONNECTED.",
+        "SYS: VOLTAGE AND OPTICAL DENSITY: OK.",
+        "SYS: STANDBY ACTIVE. SYSTEM READY."
       ];
       let sysLogIdx = 0;
       gsap.timeline({ repeat: -1 })
         .to({}, {
-          duration: 4.5,
+          duration: 6.0,
           onRepeat: () => {
             if (activeModuleRef.current === 0) {
               sysLogIdx = (sysLogIdx + 1) % sysLogs.length;
@@ -522,10 +545,10 @@ export default function Home() {
               if (logEl) {
                 gsap.to(logEl, {
                   opacity: 0,
-                  duration: 0.15,
+                  duration: 0.2,
                   onComplete: () => {
                     logEl.textContent = sysLogs[sysLogIdx];
-                    gsap.to(logEl, { opacity: 1, duration: 0.15 });
+                    gsap.to(logEl, { opacity: 1, duration: 0.2 });
                   }
                 });
               }
@@ -664,10 +687,7 @@ export default function Home() {
     <div ref={containerRef} className="relative w-full bg-white text-secondary">
       {/* Background radial soft light */}
       <div className="absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-primary-light/40 blur-3xl"></div>
-      
-      {/* ══════════════════════════════════════════
-          SECTION 1: HERO HEADER (unchanged)
-      ══════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════════ */}
       <section ref={heroRef} className="relative pt-16 pb-20 md:pt-24 md:pb-32 bg-gradient-to-b from-white via-primary-light/20 to-white overflow-hidden">
         {/* Subtle background animated blobs & coordinates grid */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none">
@@ -695,26 +715,20 @@ export default function Home() {
         </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 items-center">
             
-            {/* Text details */}
-            <div className="lg:col-span-6 text-center lg:text-left space-y-7">
-              <div className="hero-tag inline-flex items-center space-x-2 rounded-full bg-teal-500/10 border border-teal-500/20 px-4 py-1.5 shadow-sm opacity-0">
-                <span className="h-2 w-2 rounded-full bg-primary animate-ping"></span>
-                <span className="text-[11px] font-bold uppercase tracking-widest text-primary-hover">
-                  ICONN HEALTHCARE PVT LTD
-                </span>
-              </div>
-              
-              <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl font-black text-secondary tracking-tight leading-[1.05] select-none">
+            {/* Text details - Expanded to col-span-8 to align heading in 2 rows */}
+            <div className="lg:col-span-8 text-center lg:text-left space-y-7">
+              <h1 className="hero-title text-4xl sm:text-5xl lg:text-[52px] font-black text-secondary tracking-tight leading-[1.1] select-none">
                 <div className="overflow-hidden py-1">
-                  <span className="inline-block hero-title-line opacity-0">Reassuring</span>
+                  <span className="inline-block hero-title-line opacity-0">
+                    Reassuring Quality
+                  </span>
                 </div>
                 <div className="overflow-hidden py-1">
                   <span className="inline-block hero-title-line text-transparent bg-clip-text bg-gradient-to-r from-primary to-teal-600 font-extrabold opacity-0">
-                    Quality
-                  </span>{" "}
-                  <span className="inline-block hero-title-line opacity-0">in Diagnostics.</span>
+                    in Diagnostics.
+                  </span>
                 </div>
               </h1>
               
@@ -748,14 +762,14 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Graphics side: High-End Interactive Diagnostic Monitor Panel */}
-            <div className="hero-graphic lg:col-span-6 relative flex justify-center items-center opacity-0 select-none">
-              {/* Spinning background rings */}
-              <div className="absolute hero-ring-1 h-96 w-96 rounded-full border border-dashed border-primary/20 pointer-events-none"></div>
-              <div className="absolute hero-ring-2 h-[450px] w-[450px] rounded-full border border-dotted border-teal-400/20 pointer-events-none"></div>
+            {/* Graphics side - Constrained to col-span-4 to shift visualizer panel to the right */}
+            <div className="hero-graphic lg:col-span-4 relative flex justify-center items-center opacity-0 select-none">
+              {/* Spinning background rings (very faint opacity to reduce distraction) */}
+              <div className="absolute hero-ring-1 h-96 w-96 rounded-full border border-dashed border-primary/5 pointer-events-none"></div>
+              <div className="absolute hero-ring-2 h-[450px] w-[450px] rounded-full border border-dotted border-teal-400/5 pointer-events-none"></div>
               
               {/* Main dashboard frame */}
-              <div className="monitor-screen-frame relative w-full max-w-lg rounded-[2.5rem] border border-slate-200/80 bg-white/80 backdrop-blur-xl shadow-2xl p-6 overflow-hidden flex flex-col space-y-6">
+              <div className="monitor-screen-frame relative w-full max-w-md rounded-[2.5rem] border border-slate-200/80 bg-white/80 backdrop-blur-xl shadow-2xl p-6 overflow-hidden flex flex-col space-y-6">
                 
                 {/* Dashboard top bar */}
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100/80">
@@ -797,12 +811,12 @@ export default function Home() {
                 </div>
 
                 {/* Technical data visualization section */}
-                <div className="h-44 w-full bg-slate-950 rounded-2xl border border-slate-900 p-4 flex flex-col justify-between relative overflow-hidden text-white font-mono shadow-inner">
+                <div className="h-60 w-full bg-slate-950 rounded-2xl border border-slate-900 p-4 flex flex-col justify-between relative overflow-hidden text-white font-mono shadow-inner animate-pulse-subtle">
                   {/* Tech grid overlay */}
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(13,148,136,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(13,148,136,0.04)_1px,transparent_1px)] bg-[size:12px_12px] opacity-70 pointer-events-none z-0"></div>
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(13,148,136,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(13,148,136,0.03)_1px,transparent_1px)] bg-[size:16px_16px] opacity-70 pointer-events-none z-0"></div>
                   
                   {/* Glowing swipe ray effect overlay */}
-                  <div className="absolute top-0 bottom-0 w-[150px] bg-gradient-to-r from-transparent via-teal-500/10 to-transparent pointer-events-none hero-screen-glow z-0"></div>
+                  <div className="absolute top-0 bottom-0 w-[120px] bg-gradient-to-r from-transparent via-teal-500/5 to-transparent pointer-events-none hero-screen-glow z-0"></div>
 
                   {/* SCREEN 0: SYSTEM OVERVIEW (DEFAULT) */}
                   <div className={`flex flex-col justify-between h-full transition-all duration-500 ease-out z-10 ${
@@ -810,38 +824,57 @@ export default function Home() {
                       ? "opacity-100 translate-x-0 scale-100 pointer-events-auto" 
                       : "opacity-0 -translate-x-4 scale-95 pointer-events-none absolute inset-4"
                   }`}>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <span className="text-[9px] font-bold text-teal-400 uppercase tracking-widest font-sans">Calibration Status</span>
-                        <p className="text-base font-bold text-white tracking-tight font-mono mt-0.5">
-                          SYS_OK // <span className="calibration-pct">99.98%</span>
-                        </p>
+                    <div className="flex justify-between items-center h-14">
+                      <div className="flex items-center space-x-3">
+                        <div className="relative flex items-center justify-center w-11 h-11">
+                          <svg className="w-11 h-11 transform -rotate-90">
+                            <circle cx="22" cy="22" r="18" stroke="#1e293b" strokeWidth="2.5" fill="transparent" />
+                            <circle cx="22" cy="22" r="18" stroke="#0d9488" strokeWidth="2.5" fill="transparent"
+                              strokeDasharray="113" strokeDashoffset="11.3" className="calibration-arc" />
+                          </svg>
+                          <span className="absolute text-[8px] font-bold text-teal-400 calibration-pct font-mono">99.9%</span>
+                        </div>
+                        <div>
+                          <span className="text-[8px] font-bold text-teal-400 uppercase tracking-widest font-sans">Optics Status</span>
+                          <p className="text-[10px] font-bold text-white tracking-tight font-mono mt-0.5">SYS_OK // ALIGNED</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest font-sans">LOCATOR</span>
-                        <p className="text-[10px] text-teal-400 font-semibold font-mono mt-0.5"><span className="hero-coords-x">X: 0</span> <span className="hero-coords-y">Y: 0</span></p>
+                      <div className="text-right text-[8px] space-y-0.5 text-slate-400 font-mono">
+                        <p><span className="text-teal-500 font-semibold">TEMP:</span> 37.0°C</p>
+                        <p><span className="text-teal-500 font-semibold">OPTICS:</span> READY</p>
+                        <p className="text-[7.5px] text-teal-400/80"><span className="hero-coords-x">X: 0</span> <span className="hero-coords-y">Y: 0</span></p>
                       </div>
                     </div>
 
                     {/* Wave scan */}
-                    <div className="h-10 w-full relative overflow-hidden my-1">
-                      <svg className="w-full h-full" viewBox="0 0 200 50" fill="none" preserveAspectRatio="none">
-                        <g className="hero-wave-group">
+                    <div className="h-16 w-full relative overflow-hidden bg-slate-900/40 rounded-xl border border-slate-900/60 p-2 flex flex-col justify-center">
+                      <span className="text-[7.5px] text-teal-500/80 font-bold uppercase tracking-wider mb-0.5 font-sans">Microfluidics Reagent Flow</span>
+                      <div className="h-8 w-full relative overflow-hidden">
+                        <svg className="w-full h-full" viewBox="0 0 200 30" fill="none" preserveAspectRatio="none">
                           <path
-                            d="M0,25 C20,10 30,40 50,25 C70,10 80,40 100,25 C120,10 130,40 150,25 C170,10 180,40 200,25 C220,10 230,40 250,25 C270,10 280,40 300,25"
+                            d="M0,15 C20,5 30,25 50,15 C70,5 80,25 100,15 C120,5 130,25 150,15 C170,5 180,25 200,15"
                             stroke="#0d9488"
-                            strokeWidth="2.5"
+                            strokeWidth="2"
                             strokeLinecap="round"
+                            className="reagent-flow-wave-1"
                           />
-                        </g>
-                      </svg>
-                      {/* Laser Scanner Line */}
-                      <div className="absolute top-0 bottom-0 w-0.5 bg-teal-400 shadow-[0_0_8px_#0d9488] hero-scan-beam left-0 pointer-events-none"></div>
+                          <path
+                            d="M0,15 C20,25 30,5 50,15 C70,25 80,5 100,15 C120,25 130,5 150,15 C170,25 180,5 200,15"
+                            stroke="#14b8a6"
+                            strokeWidth="1"
+                            strokeDasharray="2,2"
+                            className="reagent-flow-wave-2"
+                            opacity="0.5"
+                          />
+                        </svg>
+                        {/* Laser Scanner Line */}
+                        <div className="absolute top-0 bottom-0 w-0.5 bg-teal-400 shadow-[0_0_8px_#0d9488] hero-scan-beam left-0 pointer-events-none"></div>
+                      </div>
                     </div>
 
                     {/* Terminal log ticker */}
-                    <div className="text-[8.5px] text-teal-300/80 flex items-center justify-between border-t border-slate-800/80 pt-2 font-mono">
-                      <span className="truncate hero-terminal-text">SYS: IDLE. PRESS 'RUN ANALYSIS' TO TEST.</span>
+                    <div className="text-[8px] text-teal-300/80 flex items-center justify-between border-t border-slate-900/60 pt-2 font-mono">
+                      <span className="truncate hero-terminal-text">SYS: IDLE. PATIENT SENSORS NOMINAL.</span>
                       <span className="text-[7.5px] text-slate-500 font-sans tracking-wide">FLOW: 4.2 mL/s</span>
                     </div>
                   </div>
@@ -854,29 +887,40 @@ export default function Home() {
                   }`}>
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className="text-[9px] font-bold text-amber-400 uppercase tracking-widest font-sans">In Vitro Diagnostics</span>
-                        <p className="text-sm font-bold text-white tracking-tight mt-0.5">
-                          CLINICAL CHEM // IMMUNOLOGY
+                        <span className="text-[8px] font-bold text-amber-400 uppercase tracking-widest font-sans">In Vitro Diagnostics</span>
+                        <p className="text-[10px] font-bold text-white tracking-tight mt-0.5">
+                          CLINICAL CHEMISTRY REAGENTS
                         </p>
                       </div>
-                      <div className="text-right">
-                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest font-sans">ABSORBANCE</span>
-                        <p className="text-[10px] text-amber-400 font-semibold font-mono mt-0.5">0.421 AU</p>
+                      <div className="text-right font-mono">
+                        <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest font-sans">TEMP STATUS</span>
+                        <p className="text-[8.5px] text-amber-400 font-semibold mt-0.5">37.0°C NOMINAL</p>
                       </div>
                     </div>
 
-                    {/* Fluctuating spectral chart */}
-                    <div className="h-12 w-full flex items-end justify-between px-1 gap-1 my-1">
-                      {[40, 75, 55, 90, 30, 65, 80, 45, 60, 85, 50, 70].map((val, i) => (
-                        <div key={i} className="flex-1 bg-amber-500/10 border-t border-amber-500/30 rounded-t-sm h-full relative overflow-hidden">
-                          <div className={`w-full bg-gradient-to-t from-amber-600 to-amber-400 rounded-t-sm absolute bottom-0 ivd-chart-bar ivd-chart-bar-${i}`} style={{ height: `${val}%` }}></div>
+                    {/* Clinical Chemistry Test Matrix */}
+                    <div className="grid grid-cols-2 gap-2 my-1">
+                      {[
+                        { code: "GLU", val: "5.4 mmol/L", pct: 75, col: "from-amber-600 to-amber-400" },
+                        { code: "CHO", val: "1.8 mmol/L", pct: 45, col: "from-amber-700 to-amber-500" },
+                        { code: "CRE", val: "84.0 μmol/L", pct: 60, col: "from-amber-600 to-amber-400" },
+                        { code: "AST", val: "24.5 U/L", pct: 30, col: "from-amber-700 to-amber-500" }
+                      ].map((t, i) => (
+                        <div key={i} className="bg-slate-900/80 border border-slate-800/80 rounded-lg p-1.5 flex flex-col justify-between h-10 relative overflow-hidden">
+                          <div className="flex justify-between items-center text-[7.5px] font-sans text-slate-400">
+                            <span className="font-bold text-amber-450">{t.code}</span>
+                            <span className="font-mono text-[7px] text-white">{t.val}</span>
+                          </div>
+                          <div className="w-full bg-slate-950 h-1 rounded-full overflow-hidden mt-1.5">
+                            <div className={`bg-gradient-to-r ${t.col} h-full ivd-test-bar ivd-test-bar-${i}`} style={{ width: `${t.pct}%` }}></div>
+                          </div>
                         </div>
                       ))}
                     </div>
 
-                    <div className="text-[8.5px] text-amber-300/80 flex items-center justify-between border-t border-slate-800/80 pt-2 font-mono">
-                      <span className="truncate">ANALYZING CHEMICAL SPECTRUM...</span>
-                      <span className="text-[7.5px] text-slate-500 font-sans tracking-wide">TEMP: 37.0°C</span>
+                    <div className="text-[8px] text-amber-300/80 flex items-center justify-between border-t border-slate-900/60 pt-2 font-mono">
+                      <span className="truncate">SPECTRAL ABSORBANCE READING COMPLETE</span>
+                      <span className="text-[7.5px] text-slate-500 font-sans tracking-wide">INDEX: 0.421 AU</span>
                     </div>
                   </div>
 
@@ -888,37 +932,50 @@ export default function Home() {
                   }`}>
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className="text-[9px] font-bold text-blue-400 uppercase tracking-widest font-sans">Point of Care (POC)</span>
-                        <p className="text-sm font-bold text-white tracking-tight mt-0.5">
+                        <span className="text-[8px] font-bold text-blue-400 uppercase tracking-widest font-sans">Point of Care (POC)</span>
+                        <p className="text-[10px] font-bold text-white tracking-tight mt-0.5">
                           RT-PCR MOLECULAR DIAGNOSIS
                         </p>
                       </div>
-                      <div className="text-right">
-                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest font-sans">CYCLE</span>
-                        <p className="text-[10px] text-blue-400 font-semibold font-mono mt-0.5">34 / 40</p>
+                      <div className="text-right font-mono">
+                        <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest font-sans">CYCLE</span>
+                        <p className="text-[9px] text-blue-400 font-semibold mt-0.5">34 / 40</p>
                       </div>
                     </div>
 
-                    {/* DNA Helix / PCR Curves */}
-                    <div className="h-12 w-full flex items-center justify-between my-1 relative">
-                      <svg className="w-[60%] h-full" viewBox="0 0 120 40">
-                        <path d="M5,35 Q40,35 70,20 T115,5" fill="none" stroke="#2563eb" strokeWidth="1.5" strokeDasharray="3,1.5" opacity="0.3" />
-                        <path d="M5,35 Q40,35 70,20 T115,5" fill="none" stroke="#60a5fa" strokeWidth="2.5" className="poc-curve" />
-                      </svg>
-                      
-                      <div className="w-[35%] h-full flex flex-col justify-center items-center bg-slate-900/60 p-1 border border-slate-800 rounded-lg">
-                        <span className="text-[7px] text-blue-400 font-bold uppercase tracking-wider mb-1 font-sans">DNA SCAN</span>
-                        <div className="flex gap-0.5 justify-center items-end h-4 w-full">
-                          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                            <div key={i} className="w-1 bg-blue-500 rounded-full dna-dot" style={{ height: `${6 + Math.sin(i) * 4}px` }}></div>
+                    {/* DNA Helix / PCR Curves side-by-side */}
+                    <div className="flex items-center justify-between h-28 my-1.5">
+                      {/* DNA Rotating Double-Helix SVG */}
+                      <div className="w-[30%] h-full flex items-center justify-center bg-slate-900/50 border border-slate-800/60 rounded-xl px-1 relative overflow-hidden">
+                        <span className="absolute top-1 left-1.5 text-[6.5px] text-blue-400 font-bold uppercase tracking-wider font-sans">HELIX</span>
+                        <svg className="w-12 h-24 mt-2" viewBox="0 0 60 100">
+                          {[...Array(7)].map((_, i) => (
+                            <g key={i} className="dna-pair">
+                              <line x1="12" y1={12 + i * 12} x2="48" y2={12 + i * 12} stroke="#3b82f6" strokeWidth="1.5" className="dna-line" opacity="0.3" />
+                              <circle cx="12" cy={12 + i * 12} r="2" fill="#2563eb" className="dna-dot-left" />
+                              <circle cx="48" cy={12 + i * 12} r="2" fill="#60a5fa" className="dna-dot-right" />
+                            </g>
                           ))}
+                        </svg>
+                      </div>
+                      
+                      {/* Sigmoidal Amplification Curves SVG */}
+                      <div className="w-[66%] h-full flex flex-col justify-between bg-slate-900/50 border border-slate-800/60 rounded-xl p-2">
+                        <span className="text-[6.5px] text-blue-400 font-bold uppercase tracking-wider font-sans">PCR Amplification Curve</span>
+                        <div className="h-16 w-full mt-1">
+                          <svg className="w-full h-full" viewBox="0 0 120 50">
+                            <path d="M5,45 Q40,45 60,25 T115,5" fill="none" stroke="#2563eb" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
+                            <path d="M5,45 Q40,45 60,25 T115,5" fill="none" stroke="#60a5fa" strokeWidth="2.5" className="poc-curve" />
+                            <line x1="5" y1="45" x2="115" y2="45" stroke="#334155" strokeWidth="1" />
+                            <line x1="5" y1="45" x2="5" y2="5" stroke="#334155" strokeWidth="1" />
+                          </svg>
                         </div>
                       </div>
                     </div>
 
-                    <div className="text-[8.5px] text-blue-300/80 flex items-center justify-between border-t border-slate-800/80 pt-2 font-mono">
+                    <div className="text-[8px] text-blue-300/80 flex items-center justify-between border-t border-slate-900/60 pt-2 font-mono">
                       <span className="truncate">AMPLIFYING SAMPLE RNA SEQUENCE...</span>
-                      <span className="text-[7.5px] text-slate-500 font-sans tracking-wide">CT: 24.50</span>
+                      <span className="text-[7.5px] text-slate-500 font-sans tracking-wide">Ct: 24.50</span>
                     </div>
                   </div>
 
@@ -930,29 +987,43 @@ export default function Home() {
                   }`}>
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest font-sans">Sterilization & Hygiene</span>
-                        <p className="text-sm font-bold text-white tracking-tight mt-0.5">
+                        <span className="text-[8px] font-bold text-emerald-400 uppercase tracking-widest font-sans">Sterilization & Hygiene</span>
+                        <p className="text-[10px] font-bold text-white tracking-tight mt-0.5">
                           STERILIZER DISINFECTANT INDEX
                         </p>
                       </div>
-                      <div className="text-right">
-                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest font-sans">KILL RATE</span>
-                        <p className="text-[10px] text-emerald-400 font-bold font-mono mt-0.5">99.999%</p>
+                      <div className="text-right font-mono">
+                        <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest font-sans">KILL RATE</span>
+                        <p className="text-[9px] text-emerald-400 font-bold mt-0.5">99.999%</p>
                       </div>
                     </div>
 
                     {/* Pathogen breakdown / UV scan grid */}
-                    <div className="h-12 w-full flex items-center justify-center my-1 relative overflow-hidden bg-slate-950 border border-slate-900 rounded-xl">
-                      <div className="absolute inset-0 bg-emerald-500/5 animate-pulse"></div>
-                      <div className="flex flex-wrap gap-1.5 justify-center items-center px-4 w-full">
-                        {[...Array(14)].map((_, i) => (
-                          <div key={i} className={`h-2.5 w-2.5 rounded-full border border-emerald-500/30 pathogen-dot pathogen-dot-${i}`} style={{ backgroundColor: 'rgba(16, 185, 129, 0.35)' }}></div>
-                        ))}
+                    <div className="flex items-center justify-between h-28 my-1">
+                      {/* Telemetry info */}
+                      <div className="w-[38%] h-full flex flex-col justify-between bg-slate-900/50 border border-slate-800/60 rounded-xl p-2 text-[8px] space-y-1 font-mono">
+                        <span className="text-[6.5px] text-emerald-400 font-bold uppercase tracking-wider font-sans">AUTOCLAVE</span>
+                        <p className="mt-1"><span className="text-emerald-500">PRES:</span> 1.2 bar</p>
+                        <p><span className="text-emerald-500">UV-C:</span> 254 nm</p>
+                        <p><span className="text-emerald-500">CYCLE:</span> 15 min</p>
                       </div>
-                      <div className="absolute top-0 bottom-0 w-0.5 bg-emerald-400 shadow-[0_0_10px_#10b981] clean-scan-beam left-0 pointer-events-none"></div>
+
+                      {/* Pathogen visual sweep grid */}
+                      <div className="w-[58%] h-full flex flex-col justify-between bg-slate-900/50 border border-slate-800/60 rounded-xl p-2 relative overflow-hidden">
+                        <span className="text-[6.5px] text-emerald-400 font-bold uppercase tracking-wider font-sans">PATHOGEN GRID</span>
+                        <div className="h-16 w-full flex items-center justify-center relative overflow-hidden bg-slate-950 border border-slate-900 rounded-lg">
+                          <div className="absolute inset-0 bg-emerald-500/5 animate-pulse pointer-events-none"></div>
+                          <div className="grid grid-cols-4 gap-2 px-3 w-full justify-center">
+                            {[...Array(12)].map((_, i) => (
+                              <div key={i} className={`h-2 w-2 rounded-full border border-emerald-500/30 pathogen-dot pathogen-dot-${i}`} style={{ backgroundColor: 'rgba(16, 185, 129, 0.35)' }}></div>
+                            ))}
+                          </div>
+                          <div className="absolute top-0 bottom-0 w-0.5 bg-emerald-400 shadow-[0_0_10px_#10b981] clean-scan-beam left-0 pointer-events-none"></div>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="text-[8.5px] text-emerald-300/80 flex items-center justify-between border-t border-slate-800/80 pt-2 font-mono">
+                    <div className="text-[8px] text-emerald-300/80 flex items-center justify-between border-t border-slate-900/60 pt-2 font-mono">
                       <span className="truncate">PATHOGEN CELL BREAKDOWN COMPLETED...</span>
                       <span className="text-[7.5px] text-slate-500 font-sans tracking-wide">UV-C: ACTIVE</span>
                     </div>
@@ -960,30 +1031,30 @@ export default function Home() {
 
                 </div>
 
-                {/* Overlapping modules / interactive tabs */}
-                <div className="space-y-4">
+                {/* Diagnostic Module Cards (Interactive tabs) */}
+                <div className="flex flex-col space-y-3 pt-1">
                   {/* Module 1: IVD */}
                   <button
                     onClick={() => setActiveModule(activeModule === 1 ? 0 : 1)}
-                    className={`group w-full flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 text-left select-none cursor-pointer ${
+                    className={`group w-full flex items-center justify-between p-3 rounded-2xl border transition-all duration-300 text-left select-none cursor-pointer ${
                       activeModule === 1 
-                        ? "bg-amber-500/10 border-amber-400/80 shadow-md shadow-amber-500/5 pointer-events-auto" 
-                        : "bg-white/90 border-slate-100 hover:bg-slate-50/80 hover:border-slate-200 pointer-events-auto"
-                    } ${activeModule !== 0 && activeModule !== 1 ? "opacity-40 scale-[0.98]" : "scale-100"} floating-element-1`}
+                        ? "bg-amber-500/[0.03] border-amber-500/40 shadow-sm shadow-amber-500/5 pointer-events-auto" 
+                        : "bg-white/90 border-slate-100/85 hover:bg-slate-50/80 hover:border-slate-200 hover:scale-[1.015] pointer-events-auto"
+                    } ${activeModule !== 0 && activeModule !== 1 ? "opacity-55 scale-[0.985]" : "scale-100"} floating-element-1`}
                   >
-                    <div className="flex items-center space-x-3.5">
-                      <div className={`p-2.5 rounded-xl border transition-all duration-300 ${
+                    <div className="flex items-center space-x-3">
+                      <div className={`p-2 rounded-xl border transition-all duration-300 ${
                         activeModule === 1
                           ? "bg-amber-500 text-white border-amber-600 shadow-inner"
-                          : "bg-amber-50 text-amber-600 border-amber-100 group-hover:scale-110 group-hover:rotate-3"
+                          : "bg-amber-550/5 text-amber-600 border-amber-100 group-hover:scale-105"
                       }`}>
-                        <Microscope className="h-5 w-5" />
+                        <Microscope className="h-4.5 w-4.5" />
                       </div>
                       <div>
-                        <h3 className={`text-sm font-bold transition-colors ${
-                          activeModule === 1 ? "text-amber-900" : "text-secondary"
+                        <h3 className={`text-[13px] font-bold transition-colors ${
+                          activeModule === 1 ? "text-amber-900 font-extrabold" : "text-secondary"
                         }`}>In Vitro Diagnostics</h3>
-                        <p className="text-[11px] text-slate-500 mt-0.5">Clinical chemistry & microbiology reagents</p>
+                        <p className="text-[10px] text-slate-400 mt-0.5">Clinical chemistry & microbiology reagents</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -995,7 +1066,7 @@ export default function Home() {
                       ) : (
                         <span className="h-1.5 w-1.5 rounded-full bg-slate-300 group-hover:bg-slate-400 transition-colors"></span>
                       )}
-                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider transition-colors ${
+                      <span className={`text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider transition-colors ${
                         activeModule === 1
                           ? "text-amber-800 bg-amber-500/20"
                           : "text-slate-400 bg-slate-100 group-hover:text-slate-500"
@@ -1008,25 +1079,25 @@ export default function Home() {
                   {/* Module 2: Point of Care */}
                   <button
                     onClick={() => setActiveModule(activeModule === 2 ? 0 : 2)}
-                    className={`group w-full flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 text-left select-none cursor-pointer ${
+                    className={`group w-full flex items-center justify-between p-3 rounded-2xl border transition-all duration-300 text-left select-none cursor-pointer ${
                       activeModule === 2 
-                        ? "bg-blue-500/10 border-blue-400/80 shadow-md shadow-blue-500/5 pointer-events-auto" 
-                        : "bg-white/90 border-slate-100 hover:bg-slate-50/80 hover:border-slate-200 pointer-events-auto"
-                    } ${activeModule !== 0 && activeModule !== 2 ? "opacity-40 scale-[0.98]" : "scale-100"} floating-element-2`}
+                        ? "bg-blue-500/[0.03] border-blue-400/40 shadow-sm shadow-blue-500/5 pointer-events-auto" 
+                        : "bg-white/90 border-slate-100/85 hover:bg-slate-50/80 hover:border-slate-200 hover:scale-[1.015] pointer-events-auto"
+                    } ${activeModule !== 0 && activeModule !== 2 ? "opacity-55 scale-[0.985]" : "scale-100"} floating-element-2`}
                   >
-                    <div className="flex items-center space-x-3.5">
-                      <div className={`p-2.5 rounded-xl border transition-all duration-300 ${
+                    <div className="flex items-center space-x-3">
+                      <div className={`p-2 rounded-xl border transition-all duration-300 ${
                         activeModule === 2
                           ? "bg-blue-500 text-white border-blue-600 shadow-inner"
-                          : "bg-blue-50 text-blue-600 border-blue-100 group-hover:scale-110 group-hover:-rotate-3"
+                          : "bg-blue-50 text-blue-600 border-blue-100 group-hover:scale-105"
                       }`}>
-                        <Dna className="h-5 w-5" />
+                        <Dna className="h-4.5 w-4.5" />
                       </div>
                       <div>
-                        <h3 className={`text-sm font-bold transition-colors ${
-                          activeModule === 2 ? "text-blue-900" : "text-secondary"
+                        <h3 className={`text-[13px] font-bold transition-colors ${
+                          activeModule === 2 ? "text-blue-900 font-extrabold" : "text-secondary"
                         }`}>Point of Care (POC)</h3>
-                        <p className="text-[11px] text-slate-500 mt-0.5">Molecular biology near-patient systems</p>
+                        <p className="text-[10px] text-slate-400 mt-0.5">Molecular biology near-patient systems</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -1038,7 +1109,7 @@ export default function Home() {
                       ) : (
                         <span className="h-1.5 w-1.5 rounded-full bg-slate-300 group-hover:bg-slate-400 transition-colors"></span>
                       )}
-                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider transition-colors ${
+                      <span className={`text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider transition-colors ${
                         activeModule === 2
                           ? "text-blue-800 bg-blue-500/20"
                           : "text-slate-400 bg-slate-100 group-hover:text-slate-500"
@@ -1051,25 +1122,25 @@ export default function Home() {
                   {/* Module 3: Disinfection */}
                   <button
                     onClick={() => setActiveModule(activeModule === 3 ? 0 : 3)}
-                    className={`group w-full flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 text-left select-none cursor-pointer ${
+                    className={`group w-full flex items-center justify-between p-3 rounded-2xl border transition-all duration-300 text-left select-none cursor-pointer ${
                       activeModule === 3 
-                        ? "bg-emerald-500/10 border-emerald-400/80 shadow-md shadow-emerald-500/5 pointer-events-auto" 
-                        : "bg-white/90 border-slate-100 hover:bg-slate-50/80 hover:border-slate-200 pointer-events-auto"
-                    } ${activeModule !== 0 && activeModule !== 3 ? "opacity-40 scale-[0.98]" : "scale-100"} floating-element-3`}
+                        ? "bg-emerald-500/[0.03] border-emerald-400/40 shadow-sm shadow-emerald-500/5 pointer-events-auto" 
+                        : "bg-white/90 border-slate-100/85 hover:bg-slate-50/80 hover:border-slate-200 hover:scale-[1.015] pointer-events-auto"
+                    } ${activeModule !== 0 && activeModule !== 3 ? "opacity-55 scale-[0.985]" : "scale-100"} floating-element-3`}
                   >
-                    <div className="flex items-center space-x-3.5">
-                      <div className={`p-2.5 rounded-xl border transition-all duration-300 ${
+                    <div className="flex items-center space-x-3">
+                      <div className={`p-2 rounded-xl border transition-all duration-300 ${
                         activeModule === 3
                           ? "bg-emerald-500 text-white border-emerald-600 shadow-inner"
-                          : "bg-emerald-50 text-emerald-600 border-emerald-100 group-hover:scale-110 group-hover:rotate-3"
+                          : "bg-emerald-50 text-emerald-600 border-emerald-100 group-hover:scale-105"
                       }`}>
-                        <ShieldCheck className="h-5 w-5" />
+                        <ShieldCheck className="h-4.5 w-4.5" />
                       </div>
                       <div>
-                        <h3 className={`text-sm font-bold transition-colors ${
-                          activeModule === 3 ? "text-emerald-900" : "text-secondary"
+                        <h3 className={`text-[13px] font-bold transition-colors ${
+                          activeModule === 3 ? "text-emerald-900 font-extrabold" : "text-secondary"
                         }`}>Sterilization & Hygiene</h3>
-                        <p className="text-[11px] text-slate-500 mt-0.5">Instrument & surface chemical sterilizers</p>
+                        <p className="text-[10px] text-slate-400 mt-0.5">Instrument & surface chemical sterilizers</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -1081,7 +1152,7 @@ export default function Home() {
                       ) : (
                         <span className="h-1.5 w-1.5 rounded-full bg-slate-300 group-hover:bg-slate-400 transition-colors"></span>
                       )}
-                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider transition-colors ${
+                      <span className={`text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider transition-colors ${
                         activeModule === 3
                           ? "text-emerald-800 bg-emerald-500/20"
                           : "text-slate-400 bg-slate-100 group-hover:text-slate-500"
@@ -1091,7 +1162,6 @@ export default function Home() {
                     </div>
                   </button>
                 </div>
-
               </div>
             </div>
 
@@ -1298,14 +1368,26 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-stretch">
             {processSteps.map((step, idx) => (
-              <div key={idx} className="process-step relative group opacity-0">
+              <div key={idx} className="process-step relative group opacity-0 flex flex-col h-full">
                 {/* Connector line for desktop */}
                 {idx < processSteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-10 left-[calc(100%_-_16px)] w-[calc(100%_-_48px)] h-0.5 bg-gradient-to-r from-primary/30 to-primary/10 z-0"></div>
+                  <div className="hidden lg:block absolute top-[52px] left-[calc(100%_-_24px)] w-[80px] h-6 z-20 pointer-events-none">
+                    {/* Background line track */}
+                    <div className="absolute top-1/2 left-0 w-full h-[2px] bg-slate-100 -translate-y-1/2 rounded-full"></div>
+                    {/* Flowing animated pulse */}
+                    <div className="absolute top-1/2 left-0 w-[40px] h-[3px] bg-gradient-to-r from-transparent via-primary to-transparent -translate-y-1/2 rounded-full animate-flow-horizontal"></div>
+                    {/* Arrow head at the end */}
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 flex items-center justify-center text-primary/60">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
                 )}
-                <div className="relative bg-white p-8 rounded-3xl border border-card-border hover:border-primary/40 shadow-sm hover:shadow-xl transition-all duration-300 space-y-5">
+
+                <div className="relative h-full flex flex-col bg-white p-8 rounded-3xl border border-card-border hover:border-primary/40 shadow-sm hover:shadow-xl transition-all duration-300 space-y-5">
                   {/* Step number */}
                   <div className="flex items-center justify-between">
                     <span className="text-4xl font-black text-primary/15 group-hover:text-primary/30 transition-colors">{step.step}</span>
@@ -1317,8 +1399,22 @@ export default function Home() {
                     </div>
                   </div>
                   <h3 className="text-xl font-bold text-secondary group-hover:text-primary transition-colors">{step.title}</h3>
-                  <p className="text-sm text-secondary-light leading-relaxed font-normal">{step.desc}</p>
+                  <p className="text-sm text-secondary-light leading-relaxed font-normal flex-grow">{step.desc}</p>
                 </div>
+
+                {/* Mobile vertical flow arrow connector */}
+                {idx < processSteps.length - 1 && (
+                  <div className="lg:hidden flex flex-col items-center justify-center py-4 my-2 relative pointer-events-none">
+                    <div className="w-[2px] h-12 bg-slate-100 rounded-full relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-[20px] bg-gradient-to-b from-transparent via-primary to-transparent rounded-full animate-flow-vertical"></div>
+                    </div>
+                    <div className="text-primary/60 mt-1">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
