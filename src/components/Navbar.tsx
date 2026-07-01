@@ -3,17 +3,32 @@
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Menu, X, Heart, Phone } from "lucide-react";
+import Image from "next/image";
+import { Menu, X, Phone } from "lucide-react";
 import gsap from "gsap";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   
   const navRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const linksRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Check on mount
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     // Initial mount animations
@@ -63,25 +78,30 @@ export default function Navbar() {
   return (
     <header 
       ref={navRef} 
-      className="sticky top-0 z-50 w-full transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm border-b border-card-border"
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled 
+          ? "bg-white/95 backdrop-blur-md shadow-md border-b border-card-border" 
+          : "bg-white/80 backdrop-blur-md shadow-sm border-b border-card-border/50"
+      }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between">
+        <div className={`flex items-center justify-between transition-all duration-300 ${
+          isScrolled ? "h-16" : "h-20"
+        }`}>
           
           {/* Logo */}
-          <Link href="/">
-            <div ref={logoRef} className="flex items-center space-x-2 cursor-pointer group">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-teal-500/20 group-hover:rotate-12 transition-transform duration-300">
-                <Heart className="h-6 w-6 animate-pulse" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tight text-secondary leading-none">
-                  ICONN
-                </span>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-primary leading-none mt-1">
-                  Healthcare
-                </span>
-              </div>
+          <Link href="/" aria-label="Iconn Healthcare — home">
+            <div ref={logoRef} className="flex items-center cursor-pointer group">
+              <Image
+                src="/logo.png"
+                alt="Iconn Healthcare"
+                width={406}
+                height={198}
+                priority
+                className={`w-auto transition-all duration-300 group-hover:scale-105 ${
+                  isScrolled ? "h-8 md:h-9" : "h-9 md:h-11"
+                }`}
+              />
             </div>
           </Link>
 
@@ -93,9 +113,10 @@ export default function Navbar() {
                 <Link
                   key={item.label}
                   href={item.href}
+                  aria-current={isActive ? "page" : undefined}
                   className={`nav-link relative py-2 text-sm font-semibold tracking-wide transition-all duration-300 hover:text-primary ${
-                    isActive 
-                      ? "text-primary" 
+                    isActive
+                      ? "text-primary"
                       : "text-secondary-light"
                   }`}
                 >
@@ -123,7 +144,10 @@ export default function Navbar() {
           <div className="flex md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center rounded-xl p-2.5 text-secondary-light hover:bg-primary-light hover:text-primary focus:outline-none transition-all duration-200"
+              aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
+              className="inline-flex items-center justify-center rounded-xl p-2.5 text-secondary-light hover:bg-primary-light hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all duration-200"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -133,7 +157,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-card-border shadow-lg animate-fade-in">
+        <div id="mobile-menu" className="md:hidden bg-white/95 backdrop-blur-md border-t border-card-border shadow-lg animate-fade-in">
           <div className="space-y-1 px-4 py-4 sm:px-6">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
@@ -142,6 +166,7 @@ export default function Navbar() {
                   key={item.label}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
+                  aria-current={isActive ? "page" : undefined}
                   className={`block rounded-xl px-4 py-3 text-base font-medium transition-all duration-200 ${
                     isActive 
                       ? "bg-primary text-white" 

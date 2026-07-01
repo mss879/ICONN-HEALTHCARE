@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, MapPin, Phone, Mail, ChevronUp } from "lucide-react";
+import { siteConfig } from "@/lib/site";
 
 export default function Footer() {
   const scrollToTop = () => {
@@ -25,7 +26,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-gray-400 font-normal leading-relaxed">
-              Sri Lanka's trusted partner in distributing high-value diagnostic systems, point of care, laboratory reagents, and disinfectants. Delivering reassuring quality.
+              Sri Lanka&apos;s trusted partner in distributing high-value diagnostic systems, point of care, laboratory reagents, and disinfectants. Delivering reassuring quality.
             </p>
             <div className="text-xs uppercase tracking-widest text-primary font-bold">
               Reassuring quality
@@ -108,19 +109,21 @@ export default function Footer() {
               &copy; {new Date().getFullYear()} Iconn Healthcare Pvt Ltd. All rights reserved. Sri Lanka.
             </p>
             <div className="flex items-center space-x-2 text-xs text-gray-500">
-              <span>Built & Designed by</span>
-              <a 
-                href="https://arc.ai" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="flex items-center hover:scale-110 transition-all duration-200"
-                title="Arc AI - High-End Web Development & AI Solutions"
-                aria-label="Arc AI"
+              <span>Designed &amp; developed by</span>
+              <a
+                href={siteConfig.arcAi.url}
+                target="_blank"
+                rel="noopener"
+                className="group inline-flex items-center transition-opacity duration-200 hover:opacity-80"
+                title={siteConfig.arcAi.label}
+                aria-label={siteConfig.arcAi.label}
               >
-                <img 
-                  src="/arclogo.webp" 
-                  alt="Arc AI Logo" 
-                  className="h-7 w-auto object-contain transition-all duration-200" 
+                <Image
+                  src="/arclogo.webp"
+                  alt="Arc AI — AI-powered web design and development agency in Sri Lanka"
+                  width={28}
+                  height={28}
+                  className="h-6 w-auto object-contain transition-transform duration-200 group-hover:scale-110"
                 />
               </a>
             </div>
